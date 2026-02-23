@@ -1,0 +1,115 @@
+[
+  {
+    "id": "52b0a563-ab7a-472f-8d9e-eb40af007005",
+    "email": "Marcussanchez1997@gmail.com",
+    "name": "Marcus Sanchez",
+    "passwordHash": "$2a$10$7s2UKHpFpSWhTLwDf3zgquofUeHK77QlNj5Wf1wW2kyZsm8mGURBq",
+    "profiles": [
+      {
+        "id": "ccce2249-0957-4cb0-a595-fc1f77b0691d",
+        "createdAt": "2026-02-04T15:37:00.359Z",
+        "profile": {
+          "age": 29,
+          "weight": 101,
+          "conditions": [],
+          "allergies": []
+        }
+      },
+      {
+        "id": "ab7d3040-153b-407c-bec6-57b404f17f25",
+        "createdAt": "2026-02-04T15:43:34.029Z",
+        "profile": {
+          "age": 29,
+          "weight": 100,
+          "conditions": [
+            "hypertension"
+          ],
+          "allergies": [
+            "egg"
+          ]
+        }
+      },
+      {
+        "id": "6a19c68d-0d48-4056-9caa-e17d119b893f",
+        "createdAt": "2026-02-04T16:50:48.255Z",
+        "profile": {
+          "age": 30,
+          "weight": 70,
+          "conditions": [],
+          "allergies": []
+        }
+      },
+      {
+        "id": "4e38d033-59ce-4511-acab-53886022be02",
+        "createdAt": "2026-02-04T18:25:25.572Z",
+        "profile": {
+          "age": 29,
+          "weight": 100,
+          "conditions": [
+            "diabetesMellitus"
+          ],
+          "allergies": [
+            "egg"
+          ],
+          "dietaryRestriction": "omnivore",
+          "religiousPreference": "none"
+        }
+      },
+      {
+        "id": "5ce848d5-67ae-4b5e-be7d-3d2db47abf64",
+        "createdAt": "2026-02-04T21:01:53.833Z",
+        "profile": {
+          "age": 30,
+          "weight": 70,
+          "conditions": [
+            "diabetes"
+          ],
+          "allergies": [],
+          "dietaryRestriction": "omnivore",
+          "religiousPreference": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "173d4a12-667a-433e-b287-ee6d20da7095",
+    "email": "Katrinvoehringer@gmx.de",
+    "name": "Katrin Vöhringer ",
+    "passwordHash": "$2a$10$7QPj1RO.bxYaYkwujWnoHepfTdpYiuznpaCEHrN7Na24mMU7ASzx.",
+    "profiles": [
+      {
+        "id": "8beab66d-3225-4967-8808-09ebc5a9cf3d",
+        "createdAt": "2026-02-04T22:58:54.711Z",
+        "profile": {
+          "age": 27,
+          "weight": 76,
+          "conditions": [],
+          "allergies": [],
+          "dietaryRestriction": "vegetarian",
+          "religiousPreference": ""
+        }
+      },
+      {
+        "id": "7ec1f9f9-58e9-4f4b-9da3-90d330a2450b",
+        "createdAt": "2026-02-12T13:09:19.555Z",
+        "profile": {
+          "age": 30,
+          "weight": 70,
+          "conditions": [],
+          "allergies": [
+            "Nuts"
+          ],
+          "dietaryRestriction": "vegetarian",
+          "religiousPreference": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "e33e997b-10d6-47ed-bb7c-aebf3c0429b7",
+    "email": "paulbachan74@gmail.com",
+    "name": "Paul ",
+    "passwordHash": "$2a$10$s0sGt33TIQZimyoID.B.LuToixlNrgoSkan.AmQDLqmnOimxElULe",
+    "profiles": []
+  }
+]

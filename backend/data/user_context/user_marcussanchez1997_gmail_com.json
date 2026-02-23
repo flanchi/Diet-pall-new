@@ -1,0 +1,33 @@
+{
+  "userInfo": {
+    "name": "Marcus Sanchez",
+    "email": "Marcussanchez1997@gmail.com"
+  },
+  "profile": {
+    "age": 30,
+    "weight": 100,
+    "height": 180,
+    "gender": "male",
+    "conditions": [
+      "diabetes",
+      "ischaemicHeartDisease"
+    ],
+    "allergies": [
+      "Nuts"
+    ],
+    "medications": [
+      {
+        "name": "Panadol",
+        "concentration": "100",
+        "medium": "oral-pill",
+        "dosage": "2-pills",
+        "dosageCustom": "",
+        "frequency": "as-needed",
+        "id": 1771371687268
+      }
+    ],
+    "dietaryRestriction": "omnivore",
+    "religiousPreference": "Halal"
+  },
+  "updatedAt": "2026-02-23T21:15:49.964Z"
+}

@@ -1,0 +1,395 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 min-h-screen;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.3px;
+}
+
+.theme-dark body {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.theme-light body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.text-size-sm body { font-size: 14px; }
+.text-size-md body { font-size: 16px; }
+.text-size-lg body { font-size: 18px; }
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Fixed background image with overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/assets/gb.jpg.jpg");
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.7) 40%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+#root {
+  position: relative;
+  z-index: 2;
+}
+
+.app-root {
+  @apply relative z-10;
+}
+
+.chat-markdown {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.chat-markdown p {
+  margin: 0 0 0.5rem 0;
+}
+
+.chat-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-markdown ul,
+.chat-markdown ol {
+  margin: 0 0 0.5rem 1.25rem;
+  padding: 0;
+}
+
+.chat-markdown li {
+  margin: 0.15rem 0;
+}
+
+.chat-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 0.5rem 0;
+}
+
+.chat-markdown th,
+.chat-markdown td {
+  border: 1px solid #e5e7eb;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.chat-markdown thead {
+  background: #f8fafc;
+}
+
+.chat-markdown a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.chat-markdown code {
+  background: #f1f5f9;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.chat-markdown pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  overflow-x: auto;
+}
+
+/* Enhanced animations */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer-loading {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 50%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Smooth transitions */
+button {
+  @apply transition-all duration-300 ease-out;
+}
+
+input,
+textarea {
+  @apply transition-all duration-300;
+}
+
+input:focus,
+textarea:focus {
+  @apply ring-2 ring-primary-500 ring-offset-2;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-card hover:translate-y-[-2px];
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+}
+
+/* Badge styling */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700;
+}
+
+.badge-secondary {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary-100 text-secondary-700;
+}
+
+.badge-accent {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-accent-100 text-accent-700;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-gradient-to-r from-gray-200 to-gray-300 rounded;
+}
+
+/* Glass morphism effect */
+.glass {
+  @apply bg-white/80 backdrop-blur-sm border border-white/20 rounded-lg;
+}
+
+/* Underline animation */
+.underline-animate {
+  position: relative;
+  overflow: hidden;
+}
+
+.underline-animate::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+  animation: slideRight 0.6s ease;
+}
+
+@keyframes slideRight {
+  to { left: 100%; }
+}
+
+/* Responsive text sizing */
+@media (max-width: 640px) {
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+}
+
+/* Dark mode toggle support */
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-slate-950;
+  }
+  
+  .glass {
+    @apply bg-slate-900/80 border border-slate-700/20;
+  }
+}
+
+/* Unified dark theme overrides (app dark mode + system dark mode) */
+.theme-dark body {
+  color: #e2e8f0;
+}
+
+.theme-dark body::after {
+  background: linear-gradient(
+    90deg,
+    rgba(2, 6, 23, 0.72) 0%,
+    rgba(2, 6, 23, 0.72) 40%,
+    rgba(2, 6, 23, 0.58) 60%,
+    rgba(2, 6, 23, 0.58) 100%
+  );
+}
+
+.theme-dark .app-root .bg-white,
+.theme-dark .app-root [class*="bg-white/"] {
+  background-color: rgba(15, 23, 42, 0.92) !important;
+}
+
+.theme-dark .app-root .glass {
+  background: rgba(15, 23, 42, 0.78) !important;
+  border-color: rgba(71, 85, 105, 0.45) !important;
+}
+
+.theme-dark .app-root .text-slate-900,
+.theme-dark .app-root .text-slate-800,
+.theme-dark .app-root .text-slate-700 {
+  color: #f1f5f9 !important;
+}
+
+.theme-dark .app-root .text-slate-600,
+.theme-dark .app-root .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+.theme-dark .app-root .border-slate-200,
+.theme-dark .app-root .border-slate-300,
+.theme-dark .app-root [class*="border-white/"] {
+  border-color: rgba(71, 85, 105, 0.55) !important;
+}
+
+.theme-dark .app-root .bg-slate-50,
+.theme-dark .app-root .bg-slate-100 {
+  background-color: rgba(30, 41, 59, 0.85) !important;
+}
+
+.theme-dark .app-root input,
+.theme-dark .app-root textarea,
+.theme-dark .app-root select {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(71, 85, 105, 0.7) !important;
+}
+
+.theme-dark .app-root input::placeholder,
+.theme-dark .app-root textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.theme-dark .chat-markdown th,
+.theme-dark .chat-markdown td {
+  border-color: #334155;
+}
+
+.theme-dark .chat-markdown thead {
+  background: #1e293b;
+}
+
+.theme-dark .chat-markdown code {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.theme-light) body {
+    color: #e2e8f0;
+  }
+
+  html:not(.theme-light) body::after {
+    background: linear-gradient(
+      90deg,
+      rgba(2, 6, 23, 0.72) 0%,
+      rgba(2, 6, 23, 0.72) 40%,
+      rgba(2, 6, 23, 0.58) 60%,
+      rgba(2, 6, 23, 0.58) 100%
+    );
+  }
+
+  html:not(.theme-light) .app-root .bg-white,
+  html:not(.theme-light) .app-root [class*="bg-white/"] {
+    background-color: rgba(15, 23, 42, 0.92) !important;
+  }
+
+  html:not(.theme-light) .app-root .glass {
+    background: rgba(15, 23, 42, 0.78) !important;
+    border-color: rgba(71, 85, 105, 0.45) !important;
+  }
+
+  html:not(.theme-light) .app-root .text-slate-900,
+  html:not(.theme-light) .app-root .text-slate-800,
+  html:not(.theme-light) .app-root .text-slate-700 {
+    color: #f1f5f9 !important;
+  }
+
+  html:not(.theme-light) .app-root .text-slate-600,
+  html:not(.theme-light) .app-root .text-slate-500 {
+    color: #cbd5e1 !important;
+  }
+
+  html:not(.theme-light) .app-root .border-slate-200,
+  html:not(.theme-light) .app-root .border-slate-300,
+  html:not(.theme-light) .app-root [class*="border-white/"] {
+    border-color: rgba(71, 85, 105, 0.55) !important;
+  }
+
+  html:not(.theme-light) .app-root .bg-slate-50,
+  html:not(.theme-light) .app-root .bg-slate-100 {
+    background-color: rgba(30, 41, 59, 0.85) !important;
+  }
+
+  html:not(.theme-light) .app-root input,
+  html:not(.theme-light) .app-root textarea,
+  html:not(.theme-light) .app-root select {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    color: #f1f5f9 !important;
+    border-color: rgba(71, 85, 105, 0.7) !important;
+  }
+
+  html:not(.theme-light) .app-root input::placeholder,
+  html:not(.theme-light) .app-root textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  html:not(.theme-light) .chat-markdown th,
+  html:not(.theme-light) .chat-markdown td {
+    border-color: #334155;
+  }
+
+  html:not(.theme-light) .chat-markdown thead {
+    background: #1e293b;
+  }
+
+  html:not(.theme-light) .chat-markdown code {
+    background: #1e293b;
+    color: #e2e8f0;
+  }
+}

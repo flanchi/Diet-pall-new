@@ -1,0 +1,12 @@
+{
+  "restaurants": [
+    { "id": 1, "name": "Port of Spain Fish Grill", "lat": 10.6667, "lng": -61.5167, "type": "restaurant", "tags": ["seafood", "grill"] },
+    { "id": 2, "name": "San Fernando Veggie Corner", "lat": 10.2833, "lng": -61.4667, "type": "restaurant", "tags": ["vegetarian", "local"] },
+    { "id": 3, "name": "Chaguanas Doubles Stall", "lat": 10.5167, "lng": -61.4, "type": "restaurant", "tags": ["street-food"] }
+  ],
+  "ingredients": [
+    { "id": 101, "name": "Callaloo", "lat": 10.667, "lng": -61.517, "type": "ingredient" },
+    { "id": 102, "name": "Dasheen (taro)", "lat": 10.283, "lng": -61.467, "type": "ingredient" },
+    { "id": 103, "name": "Pumpkin", "lat": 10.517, "lng": -61.401, "type": "ingredient" }
+  ]
+}
