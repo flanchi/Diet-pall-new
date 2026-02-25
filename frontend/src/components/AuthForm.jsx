@@ -140,19 +140,7 @@ export default function AuthForm({ onAuth }) {
                   />
                   Keep me logged in
                 </label>
-                <button
-                  type="button"
-                  className="text-primary-500 hover:underline text-sm font-semibold"
-                  onClick={() => {
-                    if (typeof window !== "undefined" && window.setTab) {
-                      window.setTab("forgot")
-                    } else if (setTab) {
-                      setTab("forgot")
-                    }
-                  }}
-                >
-                  Forgot password?
-                </button>
+                {/* Removed duplicate forgot password button. Use App.jsx link for navigation. */}
               </div>
             )}
           </div>
