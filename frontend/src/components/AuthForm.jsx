@@ -149,7 +149,6 @@ export default function AuthForm({ onAuth }) {
               </div>
             )}
           </div>
-          </div>
 
           <div className="flex gap-3 pt-6">
             <button
