@@ -1,4 +1,4 @@
-﻿import React from "react"
+﻿import React, { useState } from "react"
 
 const mealEmojis = {
   breakfast: "",
@@ -32,51 +32,66 @@ export default function MealPlanDisplay({ mealPlan, onGetRecipe }) {
         </div>
 
         <div className="grid gap-6">
-          {mealPlan.meals.map((meal, idx) => (
-            <div
-              key={idx}
-              className={`group relative rounded-2.5xl p-8 border-2 bg-white/20 backdrop-blur-sm ${mealGradients[meal.slot] || "border-slate-300"} card-hover overflow-hidden`}
-            >
-              {/* Background glow effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary-300 to-secondary-300 rounded-2.5xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
+          {mealPlan.meals.map((meal, idx) => {
+            const [collapsed, setCollapsed] = useState(false);
+            return (
+              <div
+                key={idx}
+                className={`group relative rounded-2.5xl p-8 border-2 bg-white/20 backdrop-blur-sm ${mealGradients[meal.slot] || "border-slate-300"} card-hover overflow-hidden`}
+              >
+                {/* Background glow effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-300 to-secondary-300 rounded-2.5xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
 
-              <div className="relative space-y-4">
-                {/* Header with emoji and time */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="text-5xl">{mealEmojis[meal.slot] || ""}</div>
-                    <div>
-                      <h4 className="text-2xl font-bold text-slate-900 capitalize">{meal.slot}</h4>
-                      <p className="text-sm text-slate-600">Recommended meal</p>
+                <div className="relative space-y-4">
+                  {/* Header with emoji and time */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-5xl">{mealEmojis[meal.slot] || ""}</div>
+                      <div>
+                        <h4 className="text-2xl font-bold text-slate-900 capitalize">{meal.slot}</h4>
+                        <p className="text-sm text-slate-600">Recommended meal</p>
+                      </div>
+                    </div>
+                    <div className="text-right hidden md:block">
+                      <p className="text-xs text-slate-500 uppercase tracking-widest">Meal</p>
+                      <p className="text-lg font-bold gradient-text">#{idx + 1}</p>
                     </div>
                   </div>
-                  <div className="text-right hidden md:block">
-                    <p className="text-xs text-slate-500 uppercase tracking-widest">Meal</p>
-                    <p className="text-lg font-bold gradient-text">#{idx + 1}</p>
-                  </div>
-                </div>
+                  <button
+                    className="absolute top-4 right-4 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-3 py-1 text-xs font-semibold shadow transition"
+                    onClick={() => setCollapsed((c) => !c)}
+                  >
+                    {collapsed ? "Expand" : "Collapse"}
+                  </button>
+                  {!collapsed && (
+                    <>
+                      {/* Meal name - highlighted */}
+                      <div className="pb-4 border-b-2 border-white/40">
+                        <p className="text-3xl font-bold text-slate-900">{meal.name}</p>
+                      </div>
 
-                {/* Meal name - highlighted */}
-                <div className="pb-4 border-b-2 border-white/40">
-                  <p className="text-3xl font-bold text-slate-900">{meal.name}</p>
+                      {/* Ingredients section */}
+                      <div className="space-y-3">
+                        <h5 className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                          <span></span> Key Ingredients
+                        </h5>
+                        <div className="flex flex-wrap gap-2.5">
+                          {meal.ingredients && meal.ingredients.map((ing, i) => (
+                            <span
+                              key={i}
+                              className="badge-secondary text-sm font-medium hover:shadow-lg transition-all duration-300"
+                            >
+                              {ing}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
-
-                {/* Ingredients section */}
-                <div className="space-y-3">
-                  <h5 className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <span></span> Key Ingredients
-                  </h5>
-                  <div className="flex flex-wrap gap-2.5">
-                    {meal.ingredients && meal.ingredients.map((ing, i) => (
-                      <span
-                        key={i}
-                        className="badge-secondary text-sm font-medium hover:shadow-lg transition-all duration-300"
-                      >
-                        {ing}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              </div>
+            );
+          })}
 
                 {/* Health benefits */}
                 {meal.notes && meal.notes.length > 0 && (

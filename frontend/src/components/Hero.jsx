@@ -107,20 +107,36 @@ export default function Hero() {
             </div>
           </form>
 
-          {/* Stats */}
+          {/* Stats - Collapsible Cards */}
           <div className="grid grid-cols-3 gap-4 pt-4">
-            <div className="text-center p-4 glass rounded-2xl">
-              <p className="text-3xl font-bold gradient-text">500+</p>
-              <p className="text-sm text-slate-600">Meal Plans</p>
-            </div>
-            <div className="text-center p-4 glass rounded-2xl">
-              <p className="text-3xl font-bold gradient-text">50+</p>
-              <p className="text-sm text-slate-600">Restaurants</p>
-            </div>
-            <div className="text-center p-4 glass rounded-2xl">
-              <p className="text-3xl font-bold gradient-text">10+</p>
-              <p className="text-sm text-slate-600">Health Tips</p>
-            </div>
+            {[{
+              label: "Meal Plans",
+              value: "500+"
+            }, {
+              label: "Restaurants",
+              value: "50+"
+            }, {
+              label: "Health Tips",
+              value: "10+"
+            }].map((stat, idx) => {
+              const [collapsed, setCollapsed] = React.useState(false);
+              return (
+                <div key={stat.label} className="text-center p-4 glass rounded-2xl relative">
+                  <button
+                    className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
+                    onClick={() => setCollapsed((c) => !c)}
+                  >
+                    {collapsed ? "Expand" : "Collapse"}
+                  </button>
+                  {!collapsed && (
+                    <>
+                      <p className="text-3xl font-bold gradient-text">{stat.value}</p>
+                      <p className="text-sm text-slate-600">{stat.label}</p>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

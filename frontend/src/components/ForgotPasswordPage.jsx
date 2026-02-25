@@ -46,6 +46,15 @@ export default function ForgotPasswordPage() {
         </button>
       </form>
       {status && <div className="mt-4 text-center text-primary-500 font-semibold">{status}</div>}
+      <div className="mt-6 text-center">
+        <button
+          type="button"
+          className="text-primary-500 hover:underline font-semibold text-sm"
+          onClick={() => window.location.reload()}
+        >
+          Back to Login
+        </button>
+      </div>
     </div>
   );
 }

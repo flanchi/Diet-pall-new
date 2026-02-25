@@ -89,27 +89,42 @@ export default function AccountInfo({ user, profile, onProfile }) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Account Information Card */}
-      <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40">
-        <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-          <MaterialIcon name="account_circle" size="28px" />
-          Account Information
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-            <span className="text-slate-700 font-semibold">Name</span>
-            <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
+      {/* Account Information Card - Collapsible */}
+      {(() => {
+        const [collapsed, setCollapsed] = React.useState(false);
+        return (
+          <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
+            <button
+              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
+              onClick={() => setCollapsed((c) => !c)}
+            >
+              {collapsed ? "Expand" : "Collapse"}
+            </button>
+            {!collapsed && (
+              <>
+                <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                  <MaterialIcon name="account_circle" size="28px" />
+                  Account Information
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+                    <span className="text-slate-700 font-semibold">Name</span>
+                    <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
+                  </div>
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+                    <span className="text-slate-700 font-semibold">Email</span>
+                    <span className="text-slate-800 font-semibold">{user.email}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-700 font-semibold">Account Status</span>
+                    <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-          <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-            <span className="text-slate-700 font-semibold">Email</span>
-            <span className="text-slate-800 font-semibold">{user.email}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-slate-700 font-semibold">Account Status</span>
-            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
-          </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* Emergency Contact Section */}
       <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40">
