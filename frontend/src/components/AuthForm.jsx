@@ -15,6 +15,7 @@ function setToken(token) {
 
 export default function AuthForm({ onAuth }) {
   const [mode, setMode] = useState("login")
+  const [tab, setTab] = useState(null)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
@@ -142,7 +143,13 @@ export default function AuthForm({ onAuth }) {
                 <button
                   type="button"
                   className="text-primary-500 hover:underline text-sm font-semibold"
-                  onClick={() => alert('Forgot password procedure coming soon!')}
+                  onClick={() => {
+                    if (typeof window !== "undefined" && window.setTab) {
+                      window.setTab("forgot")
+                    } else if (setTab) {
+                      setTab("forgot")
+                    }
+                  }}
                 >
                   Forgot password?
                 </button>
