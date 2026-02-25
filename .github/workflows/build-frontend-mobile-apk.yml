@@ -42,9 +42,14 @@ jobs:
         run: |
           sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
+      - name: Configure npm registry
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm config get registry
+
       - name: Install frontend_mobile dependencies
         working-directory: frontend_mobile
-        run: npm ci
+        run: npm install --no-audit --no-fund --prefer-online
 
       - name: Build web assets
         working-directory: frontend_mobile
