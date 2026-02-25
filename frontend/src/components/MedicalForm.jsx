@@ -56,6 +56,7 @@ const getBMIRecommendation = (bmi, age, gender) => {
 }
 
 export default function MedicalForm({ onProfile, initialProfile }) {
+  const [collapsed, setCollapsed] = useState(false);
   const [age, setAge] = useState(30)
   const [weight, setWeight] = useState(70)
   const [height, setHeight] = useState(170)
@@ -185,11 +186,19 @@ export default function MedicalForm({ onProfile, initialProfile }) {
   }
 
   return (
-    <div className="glass rounded-2xl p-8 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40">
-      <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-        <MaterialIcon name="local_hospital" size="28px" />
-        Medical Profile
-      </h2>
+    <div className="space-y-6 animate-fade-in relative">
+      <button
+        className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+        onClick={() => setCollapsed(c => !c)}
+      >
+        <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
+      </button>
+      {!collapsed && (
+            <div className="glass rounded-2xl p-8 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40">
+          <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+            <MaterialIcon name="local_hospital" size="28px" />
+            Medical Profile
+          </h2>
       <p className="text-sm text-slate-600 mb-6">Save your profile to generate daily meal plans from the Home tab.</p>
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
@@ -522,6 +531,8 @@ export default function MedicalForm({ onProfile, initialProfile }) {
           {loading ? '⏳ Saving...' : '💾 Save Profile'}
         </button>
       </div>
+          </div>
+        )}
     </div>
   )
 }

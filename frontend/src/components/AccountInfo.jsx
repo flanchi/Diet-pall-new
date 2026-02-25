@@ -95,10 +95,10 @@ export default function AccountInfo({ user, profile, onProfile }) {
         return (
           <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
             <button
-              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
+              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
               onClick={() => setCollapsed((c) => !c)}
             >
-              {collapsed ? "Expand" : "Collapse"}
+              <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
             </button>
             {!collapsed && (
               <>
@@ -127,7 +127,95 @@ export default function AccountInfo({ user, profile, onProfile }) {
       })()}
 
       {/* Emergency Contact Section */}
-      <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40">
+      {(() => {
+        const [emCollapsed, setEmCollapsed] = React.useState(false);
+        return (
+          <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
+            <button
+              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+              onClick={() => setEmCollapsed(c => !c)}
+            >
+              <MaterialIcon name={emCollapsed ? "expand_more" : "expand_less"} size="20px" />
+            </button>
+            {!emCollapsed && (
+              <>
+                <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                  <MaterialIcon name="emergency_share" size="28px" />
+                  Emergency Contact
+                </h3>
+                <p className="text-slate-600 text-sm mb-4">Add an emergency contact for your safety</p>
+                <div className="space-y-4">
+                  {/* Emergency Contact Name */}
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={emergencyContact.name}
+                      onChange={handleEmergencyContactChange}
+                      placeholder="Emergency contact's full name"
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition duration-300"
+                    />
+                  </div>
+
+                  {/* Relationship */}
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Relationship</label>
+                    <select
+                      name="relationship"
+                      value={emergencyContact.relationship}
+                      onChange={handleEmergencyContactChange}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition duration-300"
+                    >
+                      <option value="">Select relationship</option>
+                      <option value="parent">Parent</option>
+                      <option value="sibling">Sibling</option>
+                      <option value="spouse">Spouse</option>
+                      <option value="child">Child</option>
+                      <option value="friend">Friend</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Phone Number */}
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Phone Number (Trinidad & Tobago)</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={emergencyContact.phone}
+                      onChange={handleEmergencyContactChange}
+                      placeholder="+1 868 123 4567"
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition duration-300"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">Format: +1 868 123 4567 or 0123 4567</p>
+                  </div>
+
+                  {/* Save Button */}
+                  <div className="pt-4">
+                    <button
+                      onClick={handleSaveEmergencyContact}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-glow-primary text-white font-bold py-3 px-4 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 uppercase tracking-wide text-sm flex items-center justify-center gap-2"
+                    >
+                      <MaterialIcon name="save" size="20px" />
+                      {loading ? 'Saving...' : 'Save Emergency Contact'}
+                    </button>
+                  </div>
+
+                  {/* Success Message */}
+                  {emergencySaved && (
+                    <div className="bg-green-100 border-2 border-green-500 text-green-700 px-4 py-3 rounded-lg text-sm font-semibold flex items-center gap-2">
+                      <MaterialIcon name="check_circle" size="20px" />
+                      Emergency contact saved successfully!
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )
+      })()}
         <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
           <MaterialIcon name="emergency_share" size="28px" />
           Emergency Contact
