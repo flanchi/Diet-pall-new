@@ -17,6 +17,8 @@ import BiomarkerAlerts from "./components/BiomarkerAlerts"
 import MedicationTracker from "./components/MedicationTracker"
 import Settings from "./components/Settings"
 import Subscription from "./components/Subscription"
+import ForgotPasswordPage from "./components/ForgotPasswordPage"
+import ResetPasswordPage from "./components/ResetPasswordPage"
 
 export default function App() {
   const [mealPlan, setMealPlan] = useState(null)
@@ -261,11 +263,9 @@ export default function App() {
   // Show login page if not logged in
   if (!isLoggedIn) {
     if (tab === "forgot") {
-      const ForgotPasswordPage = require("./components/ForgotPasswordPage").default;
       return <ForgotPasswordPage />;
     }
     if (tab === "reset") {
-      const ResetPasswordPage = require("./components/ResetPasswordPage").default;
       return <ResetPasswordPage />;
     }
     return (
