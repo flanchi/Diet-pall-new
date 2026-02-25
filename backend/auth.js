@@ -7,7 +7,56 @@ const jwt = require('jsonwebtoken')
 const { v4: uuidv4 } = require('uuid')
 
 const USERS_DIR = path.join(__dirname, 'data', 'users')
+const RESET_TOKENS_FILE = path.join(__dirname, 'data', 'reset_tokens.json')
+const nodemailer = require('nodemailer')
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret'
+
+function normalizeEmail(email) {
+  // Load/reset tokens from file
+  function loadResetTokens() {
+    if (fs.existsSync(RESET_TOKENS_FILE)) {
+      try {
+        return JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8'))
+      } catch (e) { return {} }
+    }
+    return {}
+  }
+
+  function saveResetTokens(tokens) {
+    fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(tokens, null, 2))
+  }
+
+  function generateResetToken() {
+    return uuidv4().replace(/-/g, '')
+  }
+
+  function sendResetEmail(email, token) {
+    // Configure nodemailer transport (update with your SMTP details)
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    })
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`
+    const mailOptions = {
+      from: process.env.SMTP_FROM || 'no-reply@dietpall.com',
+      to: email,
+      subject: 'DietPall Password Reset',
+      text: `Reset your password: ${resetUrl}`,
+      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`
+    }
+    return transporter.sendMail(mailOptions)
+  }
+  return String(email || '').trim().toLowerCase()
+}
+
+function makeInternalUsername() {
+  return `user_${uuidv4().replace(/-/g, '')}`
+}
 
 // Ensure users directory exists
 if (!fs.existsSync(USERS_DIR)) {
@@ -130,12 +179,15 @@ function readUser(username) {
 // Read user by email
 function readUserByEmail(email) {
   try {
+    const normalizedEmail = normalizeEmail(email)
+    if (!normalizedEmail) return null
+
     const files = fs.readdirSync(USERS_DIR)
     for (const username of files) {
       const userPath = path.join(USERS_DIR, username)
       if (fs.statSync(userPath).isDirectory()) {
         const user = readUser(username)
-        if (user && user.email === email) {
+        if (user && normalizeEmail(user.email) === normalizedEmail) {
           return user
         }
       }
@@ -155,23 +207,24 @@ function writeUser(user) {
 
 router.post('/register', (req, res) => {
   const { email, password, name } = req.body || {}
-  if (!email || !password) return res.status(400).json({ error: 'email and password required' })
+  const normalizedEmail = normalizeEmail(email)
 
-  if (readUserByEmail(email)) return res.status(400).json({ error: 'email already registered' })
+  if (!normalizedEmail || !password) return res.status(400).json({ error: 'email and password required' })
 
-  // Use email as username (or sanitize for folder name)
-  const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_-]/g, '')
-  
-  // Check if username folder already exists
-  const userDir = path.join(USERS_DIR, username)
-  if (fs.existsSync(userDir)) return res.status(400).json({ error: 'username already exists' })
+  if (readUserByEmail(normalizedEmail)) return res.status(400).json({ error: 'email already registered' })
+
+  // Internal storage key is unique and independent from display name/email prefix
+  let username = makeInternalUsername()
+  while (fs.existsSync(path.join(USERS_DIR, username))) {
+    username = makeInternalUsername()
+  }
 
   const passwordHash = bcrypt.hashSync(password, 10)
   const user = { 
     id: uuidv4(), 
-    email, 
+    email: normalizedEmail,
     username,
-    name: name || '', 
+    name: String(name || '').trim(), 
     passwordHash 
   }
   writeUser(user)
@@ -182,9 +235,11 @@ router.post('/register', (req, res) => {
 
 router.post('/login', (req, res) => {
   const { email, password } = req.body || {}
-  if (!email || !password) return res.status(400).json({ error: 'email and password required' })
+  const normalizedEmail = normalizeEmail(email)
 
-  const user = readUserByEmail(email)
+  if (!normalizedEmail || !password) return res.status(400).json({ error: 'email and password required' })
+
+  const user = readUserByEmail(normalizedEmail)
   if (!user) return res.status(400).json({ error: 'invalid credentials' })
 
   const ok = bcrypt.compareSync(password, user.passwordHash)
@@ -251,3 +306,50 @@ router.post('/emergency-contact', verifyToken, (req, res) => {
 })
 
 module.exports = router
+// Forgot password endpoint
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body || {}
+  const normalizedEmail = normalizeEmail(email)
+  if (!normalizedEmail) return res.status(400).json({ error: 'email required' })
+  const user = readUserByEmail(normalizedEmail)
+  if (!user) return res.status(400).json({ error: 'user not found' })
+  const tokens = loadResetTokens()
+  // Remove old tokens for this user
+  for (const t in tokens) {
+    if (tokens[t].email === normalizedEmail) delete tokens[t]
+  }
+  const token = generateResetToken()
+  tokens[token] = {
+    email: normalizedEmail,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 1000 * 60 * 60 // 1 hour
+  }
+  saveResetTokens(tokens)
+  try {
+    await sendResetEmail(normalizedEmail, token)
+    res.json({ success: true })
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to send email' })
+  }
+})
+
+// Reset password endpoint
+router.post('/reset-password', (req, res) => {
+  const { token, password } = req.body || {}
+  if (!token || !password) return res.status(400).json({ error: 'token and password required' })
+  const tokens = loadResetTokens()
+  const entry = tokens[token]
+  if (!entry) return res.status(400).json({ error: 'invalid or expired token' })
+  if (Date.now() > entry.expiresAt) {
+    delete tokens[token]
+    saveResetTokens(tokens)
+    return res.status(400).json({ error: 'token expired' })
+  }
+  const user = readUserByEmail(entry.email)
+  if (!user) return res.status(400).json({ error: 'user not found' })
+  user.passwordHash = bcrypt.hashSync(password, 10)
+  writeUser(user)
+  delete tokens[token]
+  saveResetTokens(tokens)
+  res.json({ success: true })
+})

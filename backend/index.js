@@ -210,6 +210,114 @@ function sanitizeModelReply(text) {
   return clean
 }
 
+function extractJsonBlock(text) {
+  const raw = String(text || "").trim()
+  if (!raw) return null
+
+  const fencedMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/i)
+  if (fencedMatch?.[1]) {
+    return fencedMatch[1].trim()
+  }
+
+  const firstBrace = raw.indexOf("{")
+  const lastBrace = raw.lastIndexOf("}")
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    return raw.slice(firstBrace, lastBrace + 1).trim()
+  }
+
+  return null
+}
+
+function normalizeMealPlan(rawPlan) {
+  const slots = ["breakfast", "lunch", "dinner"]
+  const rawMeals = Array.isArray(rawPlan?.meals) ? rawPlan.meals : []
+  const normalizedMeals = []
+
+  for (let index = 0; index < slots.length; index += 1) {
+    const fallbackSlot = slots[index]
+    const meal = rawMeals[index] || {}
+    const slot = slots.includes(String(meal.slot || "").toLowerCase())
+      ? String(meal.slot).toLowerCase()
+      : fallbackSlot
+
+    const name = String(meal.name || "").trim()
+    const ingredients = Array.isArray(meal.ingredients)
+      ? meal.ingredients.map(item => String(item || "").trim()).filter(Boolean).slice(0, 8)
+      : []
+    const notes = Array.isArray(meal.notes)
+      ? meal.notes.map(item => String(item || "").trim()).filter(Boolean).slice(0, 4)
+      : []
+
+    normalizedMeals.push({
+      slot,
+      name: name || `${slot[0].toUpperCase()}${slot.slice(1)} suggestion`,
+      ingredients,
+      notes
+    })
+  }
+
+  return {
+    meals: normalizedMeals,
+    meta: {
+      source: String(rawPlan?.meta?.source || "ai-mealplan-v1")
+    }
+  }
+}
+
+async function generateAiMealPlan(profile = {}) {
+  const conditions = Array.isArray(profile.conditions) ? profile.conditions : []
+  const allergies = Array.isArray(profile.allergies) ? profile.allergies : []
+  const dietaryRestriction = String(profile.dietaryRestriction || "omnivore")
+
+  const systemPrompt = `You are Diet-Pal's meal planning assistant for Trinidad & Tobago.
+Generate a realistic one-day meal plan that is practical, culturally relevant, and health-aware.
+
+Rules:
+- Return ONLY valid JSON (no markdown, no explanation).
+- Output exactly this shape:
+{
+  "meals": [
+    {"slot":"breakfast","name":"...","ingredients":["..."],"notes":["..."]},
+    {"slot":"lunch","name":"...","ingredients":["..."],"notes":["..."]},
+    {"slot":"dinner","name":"...","ingredients":["..."],"notes":["..."]}
+  ],
+  "meta": {"source":"ai-mealplan-v1"}
+}
+- Keep each meal name short.
+- Keep ingredients arrays between 3 and 8 items.
+- Keep notes arrays between 1 and 4 items.
+- Respect allergies and medical conditions strictly.
+- Prefer foods common in Trinidad & Tobago when suitable.`
+
+  const userPrompt = `Create today's meal plan using this profile data:\n${JSON.stringify(profile, null, 2)}\n\nImportant constraints:\n- Conditions: ${conditions.join(", ") || "none"}\n- Allergies: ${allergies.join(", ") || "none"}\n- Dietary preference: ${dietaryRestriction}`
+
+  const aiResult = await generateChat(
+    [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    {
+      hfPreferredModels: HF_NUTRITION_MODEL ? [HF_NUTRITION_MODEL] : [],
+      githubPreferredModels: GITHUB_NUTRITION_MODEL ? [GITHUB_NUTRITION_MODEL] : [],
+      maxTokens: 900
+    }
+  )
+
+  const jsonBlock = extractJsonBlock(aiResult.text)
+  if (!jsonBlock) {
+    throw new Error("AI meal plan did not return JSON")
+  }
+
+  const parsed = JSON.parse(jsonBlock)
+  const normalized = normalizeMealPlan(parsed)
+  normalized.meta = {
+    ...(normalized.meta || {}),
+    model: aiResult.model,
+    provider: AI_PROVIDER
+  }
+  return normalized
+}
+
 function isNameQuestion(message) {
   const text = String(message || "").toLowerCase()
   return /(what\s+is\s+my\s+name|my\s+name\s*\?|tell\s+me\s+my\s+name|do\s+you\s+know\s+my\s+name)/.test(text)
@@ -664,13 +772,25 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
   return R * c
 }
 
-app.post("/api/mealplan", (req, res) => {
+app.post("/api/mealplan", async (req, res) => {
   const profile = req.body || {}
   try {
-    const plan = generatePlan(profile)
+    const plan = await generateAiMealPlan(profile)
     res.json(plan)
   } catch (err) {
-    res.status(500).json({ error: "Failed to generate plan" })
+    console.error("AI meal plan generation failed, using rules fallback:", err.message)
+    try {
+      const fallbackPlan = generatePlan(profile)
+      res.json({
+        ...fallbackPlan,
+        meta: {
+          ...(fallbackPlan.meta || {}),
+          source: "simple-rules-fallback"
+        }
+      })
+    } catch (fallbackError) {
+      res.status(500).json({ error: "Failed to generate plan" })
+    }
   }
 })
 
