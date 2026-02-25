@@ -19,13 +19,24 @@ export default function AuthForm({ onAuth }) {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false)
 
   async function submit(e) {
     e.preventDefault()
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail || !password) {
+      alert("Please enter email and password")
+      return
+    }
+    // Optionally handle keepLoggedIn here (e.g., set longer token expiry)
+
     setLoading(true)
     try {
       const url = `${API_URL}/api/auth/${mode}`
-      const body = mode === "register" ? { email, password, name } : { email, password }
+      const body = mode === "register"
+        ? { email: normalizedEmail, password, name: name.trim() }
+        : { email: normalizedEmail, password }
       console.log('Attempting auth at:', url)
       console.log('API_URL:', API_URL)
       const res = await axios.post(url, body, {
@@ -99,13 +110,45 @@ export default function AuthForm({ onAuth }) {
 
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wide">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition duration-300"
-              placeholder=""
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition duration-300 pr-12"
+                placeholder=""
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-primary-500"
+                tabIndex={-1}
+                onClick={() => setShowPassword(v => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                <MaterialIcon name={showPassword ? "visibility_off" : "visibility"} size="24px" />
+              </button>
+            </div>
+            {mode === "login" && (
+              <div className="flex items-center justify-between mt-2">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={keepLoggedIn}
+                    onChange={e => setKeepLoggedIn(e.target.checked)}
+                    className="accent-primary-500"
+                  />
+                  Keep me logged in
+                </label>
+                <button
+                  type="button"
+                  className="text-primary-500 hover:underline text-sm font-semibold"
+                  onClick={() => alert('Forgot password procedure coming soon!')}
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+          </div>
           </div>
 
           <div className="flex gap-3 pt-6">

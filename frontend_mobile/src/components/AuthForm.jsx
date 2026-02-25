@@ -22,10 +22,18 @@ export default function AuthForm({ onAuth }) {
 
   async function submit(e) {
     e.preventDefault()
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail || !password) {
+      alert("Please enter email and password")
+      return
+    }
+
     setLoading(true)
     try {
       const url = `${API_URL}/api/auth/${mode}`
-      const body = mode === "register" ? { email, password, name } : { email, password }
+      const body = mode === "register"
+        ? { email: normalizedEmail, password, name: name.trim() }
+        : { email: normalizedEmail, password }
       console.log('Attempting auth at:', url)
       console.log('API_URL:', API_URL)
       const res = await axios.post(url, body, {

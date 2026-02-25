@@ -260,6 +260,14 @@ export default function App() {
 
   // Show login page if not logged in
   if (!isLoggedIn) {
+    if (tab === "forgot") {
+      const ForgotPasswordPage = require("./components/ForgotPasswordPage").default;
+      return <ForgotPasswordPage />;
+    }
+    if (tab === "reset") {
+      const ResetPasswordPage = require("./components/ResetPasswordPage").default;
+      return <ResetPasswordPage />;
+    }
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-100 via-white to-secondary-100 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
@@ -272,6 +280,14 @@ export default function App() {
           </div>
           <div className="animate-slide-up">
             <AuthForm onAuth={handleLogin} />
+            <div className="mt-4 text-center">
+              <button
+                className="text-primary-500 hover:underline font-semibold text-sm"
+                onClick={() => setTab("forgot")}
+              >
+                Forgot password?
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -436,9 +452,9 @@ export default function App() {
                     <div>
                       <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                         <MaterialIcon name="lunch_dining" size="28px" />
-                        Today's Meal Plan
+                        Today's AI Meal Plan
                       </h3>
-                      <p className="text-sm text-slate-600">Uses your saved medical profile from the Account tab.</p>
+                      <p className="text-sm text-slate-600">AI-powered using your saved medical profile from the Account tab.</p>
                     </div>
                     <button
                       onClick={handleGetMealPlan}
@@ -453,7 +469,7 @@ export default function App() {
                       ) : (
                         <>
                           <MaterialIcon name="auto_awesome" size="20px" />
-                          Get Meal Plan
+                          Generate with AI
                         </>
                       )}
                     </button>
@@ -463,7 +479,7 @@ export default function App() {
                 {mealPlan && <MealPlanDisplay mealPlan={mealPlan} onGetRecipe={handleGetRecipe} />}
                 {!mealPlan && (
                   <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 text-center">
-                    <p className="text-lg text-slate-700">👉 Save your medical profile in <strong>Account</strong>, then click <strong>Get Meal Plan</strong> here.</p>
+                    <p className="text-lg text-slate-700">👉 Save your medical profile in <strong>Account</strong>, then click <strong>Generate with AI</strong> here.</p>
                   </div>
                 )}
               </>

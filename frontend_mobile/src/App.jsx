@@ -442,9 +442,9 @@ export default function App() {
                     <div>
                       <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                         <MaterialIcon name="lunch_dining" size="28px" />
-                        Today's Meal Plan
+                        Today's AI Meal Plan
                       </h3>
-                      <p className="text-sm text-slate-600">Uses your saved medical profile from the Account tab.</p>
+                      <p className="text-sm text-slate-600">AI-powered using your saved medical profile from the Account tab.</p>
                     </div>
                     <button
                       onClick={handleGetMealPlan}
@@ -459,7 +459,7 @@ export default function App() {
                       ) : (
                         <>
                           <MaterialIcon name="auto_awesome" size="20px" />
-                          Get Meal Plan
+                          Generate with AI
                         </>
                       )}
                     </button>
