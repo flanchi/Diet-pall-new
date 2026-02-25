@@ -12,7 +12,8 @@ const nodemailer = require('nodemailer')
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret'
 
 function normalizeEmail(email) {
-  // Load/reset tokens from file
+  if (!email) return '';
+  return String(email).trim().toLowerCase();
   function loadResetTokens() {
     if (fs.existsSync(RESET_TOKENS_FILE)) {
       try {
