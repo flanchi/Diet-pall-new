@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DietPal Mobile</string>
+    <string name="title_activity_main">DietPal Mobile</string>
+    <string name="package_name">com.dietpal.mobile</string>
+    <string name="custom_url_scheme">com.dietpal.mobile</string>
+</resources>

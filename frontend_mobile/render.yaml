@@ -1,0 +1,10 @@
+services:
+  - type: static
+    name: diet-pal-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://diet-pall-new.onrender.com
