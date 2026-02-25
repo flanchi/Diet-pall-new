@@ -30,6 +30,18 @@ Quick one-command flow:
 npm run mobile:run
 ```
 
+## Build APK with GitHub Actions
+
+This repo includes a workflow at `.github/workflows/build-frontend-mobile-apk.yml`.
+
+How to run:
+
+1. Go to your GitHub repo.
+2. Open **Actions**.
+3. Select **Build Frontend Mobile APK**.
+4. Click **Run workflow**.
+5. When complete, download artifact **frontend-mobile-debug-apk**.
+
 The app expects the backend to run on `http://localhost:4000`.
 
 Notes:
