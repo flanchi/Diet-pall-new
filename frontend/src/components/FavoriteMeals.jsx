@@ -2,9 +2,32 @@ import React, {useEffect, useState} from 'react'
 
 export default function FavoriteMeals(){
   const [items,setItems] = useState([])
-  useEffect(()=>{
+  
+  // Function to load items from localStorage
+  const loadItems = () => {
     const raw = localStorage.getItem('favorite_meals')
     if(raw) try{ setItems(JSON.parse(raw)) }catch(e){ setItems([]) }
+  }
+  
+  useEffect(()=>{
+    loadItems()
+    
+    // Listen for storage changes (when items are added from AI chat widget)
+    const handleStorageChange = (e) => {
+      if (e.key === 'favorite_meals' || e.key === null) {
+        loadItems()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Also listen for custom event when items are added from same window
+    const handleCustomEvent = () => loadItems()
+    window.addEventListener('favoritesUpdated', handleCustomEvent)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('favoritesUpdated', handleCustomEvent)
+    }
   },[])
 
   function remove(i){

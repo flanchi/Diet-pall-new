@@ -25,6 +25,10 @@ function addMealToFavorites(meal) {
     })
 
     localStorage.setItem("favorite_meals", JSON.stringify(meals))
+    
+    // Dispatch custom event to notify components
+    window.dispatchEvent(new Event('favoritesUpdated'))
+    
     return { success: true, message: `Added "${meal.name}" to favorite meals` }
   } catch (error) {
     console.error("Error adding meal to favorites:", error)
@@ -87,6 +91,10 @@ function addIngredientsToShoppingList(ingredients) {
     }
 
     localStorage.setItem("shopping_list", JSON.stringify(shoppingList))
+    
+    // Dispatch custom event to notify components
+    window.dispatchEvent(new Event('shoppingListUpdated'))
+    
     return { success: true, message: `Added ${addedCount} ingredient(s) to shopping list` }
   } catch (error) {
     console.error("Error adding ingredients to shopping list:", error)
@@ -217,12 +225,58 @@ export default function AIChat({ user, medicalProfile, initialQuery, settings, m
 
   // Extract meal info from message context
   function extractMealFromContext(msgs) {
+    // First try to find a structured meal plan response
     for (let i = msgs.length - 1; i >= 0; i--) {
       const msg = msgs[i]
       if (msg.sender === "ai" && msg.text) {
-        const mealMatch = msg.text.match(/[-*]?\s*\*\*(?:Breakfast|Lunch|Dinner|Snack):?\s*\*\*?\s*([^\n*]+)/i)
-        if (mealMatch) {
-          return { name: mealMatch[1].trim() }
+        const text = msg.text
+        
+        // Try to extract ingredients from the AI response
+        const ingredients = []
+        
+        // Look for "Ingredients:" section
+        const ingredientsSection = text.match(/Ingredients:?\s*([^\n]+(?:\n[^\n]+)*?)(?:\n\n|\n#|#\s|$)/i)
+        if (ingredientsSection) {
+          const ingText = ingredientsSection[1]
+          // Split by commas or bullet points
+          const ingList = ingText.split(/[,•\n]/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 50)
+          ingredients.push(...ingList.slice(0, 20))
+        }
+        
+        // Also look for bullet points that look like ingredients
+        const bulletIngredients = text.match(/(?:[-*•]\s*)([A-Za-z\s]+(?:chicken|beef|pork|fish|vegetable|rice|pasta|potato|tomato|onion|garlic|carrot|broccoli|spinach|lettuce|cucumber|pepper|salt|oil|butter|cheese|bread|milk|egg)[^\n,.]*)/gi)
+        if (bulletIngredients) {
+          const bulletIngs = bulletIngredients.map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(s => s.length > 0 && s.length < 50)
+          ingredients.push(...bulletIngs.slice(0, 10))
+        }
+        
+        // Check for specific meal patterns
+        const mealTypes = [
+          { pattern: /\*\*Breakfast:\*\*\s*([^\n*]+)/i, type: 'Breakfast' },
+          { pattern: /\*\*Lunch:\*\*\s*([^\n*]+)/i, type: 'Lunch' },
+          { pattern: /\*\*Dinner:\*\*\s*([^\n*]+)/i, type: 'Dinner' },
+          { pattern: /\*\*Snack:\*\*\s*([^\n*]+)/i, type: 'Snack' }
+        ]
+        
+        for (const { pattern, type } of mealTypes) {
+          const match = text.match(pattern)
+          if (match) {
+            return {
+              name: match[1].trim(),
+              ingredients: ingredients.length > 0 ? [...new Set(ingredients)] : [],
+              notes: [type]
+            }
+          }
+        }
+        
+        // Fallback: try simpler pattern
+        const simpleMealMatch = text.match(/(?:Breakfast|Lunch|Dinner|Snack):?\s*([^\n*]+)/i)
+        if (simpleMealMatch) {
+          return {
+            name: simpleMealMatch[1].trim(),
+            ingredients: ingredients.length > 0 ? [...new Set(ingredients)] : [],
+            notes: []
+          }
         }
       }
     }
@@ -304,15 +358,43 @@ async function handleSendWithMessage(message) {
         actionResult = { success: false, message: "Could not find a restaurant to add." }
       }
     } else if (addRequest === "add_ingredients") {
-      // Try to extract ingredients from the message
+      // Try to extract ingredients from the user's message first
+      let ingredients = []
+      
+      // Look in user's message for ingredients
       const ingredientMatch = message.match(/(?:ingredients?|items?|for)\s*:?\s*([^\n?]+)/i)
       if (ingredientMatch) {
-        const ingredients = ingredientMatch[1].split(/[,;]/).map(i => i.trim()).filter(i => i.length > 0)
-        if (ingredients.length > 0) {
-          actionResult = addIngredientsToShoppingList(ingredients)
+        ingredients = ingredientMatch[1].split(/[,;]/).map(i => i.trim()).filter(i => i.length > 0)
+      }
+      
+      // If not found in user message, try to extract from AI response
+      if (ingredients.length === 0) {
+        for (let i = messages.length - 1; i >= 0; i--) {
+          const msg = messages[i]
+          if (msg.sender === "ai" && msg.text) {
+            const text = msg.text
+            
+            // Look for "Ingredients:" section in AI response
+            const ingredientsSection = text.match(/Ingredients:?\s*([^\n]+(?:\n[^\n]+)*?)(?:\n\n|\n#|#\s|$)/i)
+            if (ingredientsSection) {
+              const ingText = ingredientsSection[1]
+              ingredients = ingText.split(/[,•\n]/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 50)
+              break
+            }
+            
+            // Also look for bullet points that look like ingredients
+            const bulletIngredients = text.match(/(?:[-*•]\s*)([A-Za-z\s]+(?:chicken|beef|pork|fish|vegetable|rice|pasta|potato|tomato|onion|garlic|carrot|broccoli|spinach|lettuce|cucumber|pepper|salt|oil|butter|cheese|bread|milk|egg|flour|sugar|lemon|lime|herb|basil|thyme|oregano)[^\n,.]*)/gi)
+            if (bulletIngredients && bulletIngredients.length > 0) {
+              ingredients = bulletIngredients.map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(s => s.length > 0 && s.length < 50)
+              break
+            }
+          }
         }
       }
-      if (!actionResult) {
+      
+      if (ingredients.length > 0) {
+        actionResult = addIngredientsToShoppingList(ingredients)
+      } else {
         actionResult = { success: false, message: "Could not extract ingredients. Please specify which ingredients to add." }
       }
     }
