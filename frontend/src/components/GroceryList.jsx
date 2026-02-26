@@ -4,7 +4,8 @@ export default function GroceryList() {
   const [items, setItems] = useState([])
   const [newItem, setNewItem] = useState('')
 
-  useEffect(() => {
+  // Function to load items from localStorage
+  const loadItems = () => {
     const raw = localStorage.getItem('shopping_list')
     if (raw) {
       try {
@@ -12,6 +13,27 @@ export default function GroceryList() {
       } catch (e) {
         setItems([])
       }
+    }
+  }
+
+  useEffect(() => {
+    loadItems()
+    
+    // Listen for storage changes (when items are added from AI chat widget)
+    const handleStorageChange = (e) => {
+      if (e.key === 'shopping_list' || e.key === null) {
+        loadItems()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Also listen for custom event when items are added from same window
+    const handleCustomEvent = () => loadItems()
+    window.addEventListener('shoppingListUpdated', handleCustomEvent)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('shoppingListUpdated', handleCustomEvent)
     }
   }, [])
 
