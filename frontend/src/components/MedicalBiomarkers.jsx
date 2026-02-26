@@ -473,7 +473,7 @@ export default function MedicalBiomarkers({ user }) {
       </div>
 
       {!collapsed && (
-        <>
+        <div>
           {/* Add Entry Form */}
           {showForm && (
             <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
@@ -566,88 +566,91 @@ export default function MedicalBiomarkers({ user }) {
             <p className="text-slate-600">Regular tracking helps identify health trends and supports informed medical decisions.</p>
           </div>
         </div>
-      )}
+          )}
 
-      {/* Biomarkers List */}
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {biomarkers.length === 0 ? (
-          <div className="text-center py-8 text-slate-500">
-            <p className="text-sm">No biomarker entries yet. Start tracking by adding your first entry!</p>
-          </div>
-        ) : (
-          biomarkers.map((entry) => {
-            const bioType = biomarkerTypes[entry.type]
-            return (
-              <div
-                key={entry.id}
-                className={`rounded-lg p-4 border cursor-pointer transition ${getStatusColor(
-                  entry.type,
-                  entry.value1,
-                  entry.value2
-                )} border-opacity-30`}
-                onClick={() => setExpandedEntry(expandedEntry === entry.id ? null : entry.id)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <MaterialIcon name={bioType.icon} size="32px" />
-                    <div>
-                      <p className="font-semibold text-sm text-slate-900">{bioType.label}</p>
-                      <p className="text-xs text-slate-600 mt-1">
-                        {new Date(entry.date).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric"
-                        })}{entry.time && ` • ${entry.time}`}
-                      </p>
+          {/* Biomarkers List */}
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {biomarkers.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                <p className="text-sm">No biomarker entries yet. Start tracking by adding your first entry!</p>
+              </div>
+            ) : (
+              biomarkers.map((entry) => {
+                const bioType = biomarkerTypes[entry.type]
+                return (
+                  <div
+                    key={entry.id}
+                    className={`rounded-lg p-4 border cursor-pointer transition ${getStatusColor(
+                      entry.type,
+                      entry.value1,
+                      entry.value2
+                    )} border-opacity-30`}
+                    onClick={() => setExpandedEntry(expandedEntry === entry.id ? null : entry.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <MaterialIcon name={bioType.icon} size="32px" />
+                        <div>
+                          <p className="font-semibold text-sm text-slate-900">{bioType.label}</p>
+                          <p className="text-xs text-slate-600 mt-1">
+                            {new Date(entry.date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric"
+                            })}{entry.time && ` • ${entry.time}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-lg text-slate-900">
+                          {formatValue(entry)} <span className="text-xs font-normal text-slate-600">{bioType.unit}</span>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-lg text-slate-900">
-                      {formatValue(entry)} <span className="text-xs font-normal text-slate-600">{bioType.unit}</span>
-                    </p>
-                  </div>
-                </div>
 
-                {/* Expanded View */}
-                {expandedEntry === entry.id && (
-                  <div className="mt-4 pt-4 border-t border-current border-opacity-20 space-y-2 animate-fade-in">
-                    {entry.notes && (
-                      <div>
-                        <p className="text-xs font-semibold text-slate-700">Notes:</p>
-                        <p className="text-sm text-slate-600 italic">{entry.notes}</p>
+                    {/* Expanded View */}
+                    {expandedEntry === entry.id && (
+                      <div className="mt-4 pt-4 border-t border-current border-opacity-20 space-y-2 animate-fade-in">
+                        {entry.notes && (
+                          <div>
+                            <p className="text-xs font-semibold text-slate-700">Notes:</p>
+                            <p className="text-sm text-slate-600 italic">{entry.notes}</p>
+                          </div>
+                        )}
+                        <div className="flex gap-2 pt-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteEntry(entry.id)
+                            }}
+                            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-1 text-xs rounded transition"
+                          >
+                            🗑️ Delete
+                          </button>
+                        </div>
                       </div>
                     )}
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDeleteEntry(entry.id)
-                        }}
-                        className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-1 text-xs rounded transition"
-                      >
-                        🗑️ Delete
-                      </button>
-                    </div>
                   </div>
-                )}
-              </div>
-            )
-          })
-        )}
-      </div>
+                )
+              })
+            )}
+          </div>
 
-      {/* Summary Stats */}
-      {biomarkers.length > 0 && (
-        <>
-          <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
-          <p className="text-xs font-semibold text-slate-700">
-            📈 Total Tracked: <span className="text-blue-600">{biomarkers.length} entries</span> from{" "}
-            <span className="text-blue-600">
-              {new Set(biomarkers.map((b) => b.type)).size} different biomarkers
-            </span>
-          </p>
+          {/* Summary Stats */}
+          {biomarkers.length > 0 && (
+            <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
+              <p className="text-xs font-semibold text-slate-700">
+                📈 Total Tracked: <span className="text-blue-600">{biomarkers.length} entries</span> from{" "}
+                <span className="text-blue-600">
+                  {new Set(biomarkers.map((b) => b.type)).size} different biomarkers
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       )}
+
+
     </div>
   )
 }

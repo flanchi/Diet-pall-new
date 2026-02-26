@@ -213,7 +213,7 @@ export default function MedicationTracker({ user, medicalProfile }) {
       </div>
 
       {!collapsed && (
-        <>
+        <div>
           {medications.length === 0 ? (
             <div className="text-sm text-slate-600 py-4">
               No medications found. Add medications in your medical profile to start tracking.
@@ -222,101 +222,103 @@ export default function MedicationTracker({ user, medicalProfile }) {
             <>
               {/* Progress Bar */}
               <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
-          <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>
-        </div>
-        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-          <div
-            className={`h-full bg-gradient-to-r ${getProgressColor()} transition-all duration-300`}
-            style={{ width: `${getCompletionPercentage()}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Medications List */}
-      <div className="space-y-4">
-        {medications.map((med) => {
-          const checkboxes = getFrequencyCheckboxes(med.frequency)
-          const medDosesCompleted = checkboxes.filter((_, idx) => completedDoses[`${med.id}_${idx}`]).length
-          const isAllTaken = medDosesCompleted === checkboxes.length
-
-          return (
-            <div
-              key={med.id}
-              className={`rounded-lg p-4 border transition ${
-                isAllTaken
-                  ? "bg-green-50 border-green-300"
-                  : medDosesCompleted > 0
-                    ? "bg-blue-50 border-blue-300"
-                    : "bg-slate-50 border-slate-300"
-              }`}
-            >
-              {/* Medication Header */}
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div>
-                  <p className="font-bold text-slate-900">
-                    {med.name} <span className="text-xs font-normal text-slate-600">{med.concentration}</span>
-                  </p>
-                  <p className="text-xs text-slate-600 mt-1">
-                    {med.medium} • {med.dosage} • {med.frequency}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
+                  <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>
                 </div>
-                {isAllTaken && <span className="text-2xl">✅</span>}
+                <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                  <div
+                    className={`h-full bg-gradient-to-r ${getProgressColor()} transition-all duration-300`}
+                    style={{ width: `${getCompletionPercentage()}%` }}
+                  />
+                </div>
               </div>
 
-              {/* Dose Checkboxes */}
-              <div className="space-y-2">
-                {checkboxes.map((label, idx) => {
-                  const isChecked = completedDoses[`${med.id}_${idx}`] || false
+              {/* Medications List */}
+              <div className="space-y-4">
+                {medications.map((med) => {
+                  const checkboxes = getFrequencyCheckboxes(med.frequency)
+                  const medDosesCompleted = checkboxes.filter((_, idx) => completedDoses[`${med.id}_${idx}`]).length
+                  const isAllTaken = medDosesCompleted === checkboxes.length
+
                   return (
-                    <label
-                      key={idx}
-                      className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/50 transition"
+                    <div
+                      key={med.id}
+                      className={`rounded-lg p-4 border transition ${
+                        isAllTaken
+                          ? "bg-green-50 border-green-300"
+                          : medDosesCompleted > 0
+                            ? "bg-blue-50 border-blue-300"
+                            : "bg-slate-50 border-slate-300"
+                      }`}
                     >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleDose(med.id, idx)}
-                        className="w-5 h-5 rounded border-2 border-slate-400 cursor-pointer accent-blue-600"
-                      />
-                      <div className="flex-1">
-                        <span className={`text-sm font-medium ${isChecked ? "line-through text-slate-500" : "text-slate-700"}`}>
-                          {label}
-                        </span>
-                        <span className="text-xs text-slate-500 ml-2">{getDoseTimeLabel(med.frequency, idx)}</span>
+                      {/* Medication Header */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                          <p className="font-bold text-slate-900">
+                            {med.name} <span className="text-xs font-normal text-slate-600">{med.concentration}</span>
+                          </p>
+                          <p className="text-xs text-slate-600 mt-1">
+                            {med.medium} • {med.dosage} • {med.frequency}
+                          </p>
+                        </div>
+                        {isAllTaken && <span className="text-2xl">✅</span>}
                       </div>
-                      {isChecked && <span className="text-green-600">✓</span>}
-                    </label>
+
+                      {/* Dose Checkboxes */}
+                      <div className="space-y-2">
+                        {checkboxes.map((label, idx) => {
+                          const isChecked = completedDoses[`${med.id}_${idx}`] || false
+                          return (
+                            <label
+                              key={idx}
+                              className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/50 transition"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleDose(med.id, idx)}
+                                className="w-5 h-5 rounded border-2 border-slate-400 cursor-pointer accent-blue-600"
+                              />
+                              <div className="flex-1">
+                                <span className={`text-sm font-medium ${isChecked ? "line-through text-slate-500" : "text-slate-700"}`}>
+                                  {label}
+                                </span>
+                                <span className="text-xs text-slate-500 ml-2">{getDoseTimeLabel(med.frequency, idx)}</span>
+                              </div>
+                              {isChecked && <span className="text-green-600">✓</span>}
+                            </label>
+                          )
+                        })}
+                      </div>
+
+                      {/* Dose Counter */}
+                      <div className="mt-3 pt-3 border-t border-slate-200">
+                        <p className="text-xs text-slate-600">
+                          Doses taken: <span className="font-bold text-slate-800">{medDosesCompleted}</span> / {checkboxes.length}
+                        </p>
+                      </div>
+
+                      {/* Notes */}
+                      {med.notes && (
+                        <div className="mt-2 text-xs italic text-slate-600 bg-white/50 rounded p-2">
+                          {med.notes}
+                        </div>
+                      )}
+                    </div>
                   )
                 })}
               </div>
 
-              {/* Dose Counter */}
-              <div className="mt-3 pt-3 border-t border-slate-200">
-                <p className="text-xs text-slate-600">
-                  Doses taken: <span className="font-bold text-slate-800">{medDosesCompleted}</span> / {checkboxes.length}
+              {/* Footer Info */}
+              <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200 text-xs text-slate-700">
+                <p>
+                  <strong>💡 Tip:</strong> Check off each dose as you take your medication. Progress resets daily at midnight.
                 </p>
               </div>
-
-              {/* Notes */}
-              {med.notes && (
-                <div className="mt-2 text-xs italic text-slate-600 bg-white/50 rounded p-2">
-                  {med.notes}
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Footer Info */}
-      <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200 text-xs text-slate-700">
-        <p>
-          <strong>💡 Tip:</strong> Check off each dose as you take your medication. Progress resets daily at midnight.
-        </p>
-      </div>
-      </>
+            </>
+          )}
+        </div>
       )}
     </div>
   )
