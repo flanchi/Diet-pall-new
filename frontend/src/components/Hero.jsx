@@ -65,7 +65,7 @@ export default function Hero() {
 
   return (
     <div className="animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6">
         {/* Left Side - Content */}
         <div className="animate-slide-up space-y-6">
           <div className="space-y-3">
@@ -83,9 +83,9 @@ export default function Hero() {
         </div>
 
         {/* Right Side - Slideshow */}
-        <div className="relative hidden lg:flex items-center justify-center">
+        <div className="relative hidden lg:flex items-center justify-center justify-self-end">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl blur-2xl opacity-50"></div>
-          <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-card border border-white/20 w-full max-w-sm mt-4 lg:mt-8">
+          <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-card border border-white/20 w-full max-w-sm mt-4 lg:mt-8 ml-auto">
             {/* Tab Navigation */}
             <div className="flex gap-2 mb-6 border-b border-slate-200 pb-3">
               <button
