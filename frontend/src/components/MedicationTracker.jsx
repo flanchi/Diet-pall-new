@@ -219,22 +219,24 @@ export default function MedicationTracker({ user, medicalProfile }) {
         </button>
       </div>
 
-      {/* Progress Bar */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
-          <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>
-        </div>
-        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-          <div
-            className={`h-full bg-gradient-to-r ${getProgressColor()} transition-all duration-300`}
-            style={{ width: `${getCompletionPercentage()}%` }}
-          />
-        </div>
-      </div>
+      {!collapsed && (
+        <>
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
+              <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+              <div
+                className={`h-full bg-gradient-to-r ${getProgressColor()} transition-all duration-300`}
+                style={{ width: `${getCompletionPercentage()}%` }}
+              />
+            </div>
+          </div>
 
-      {/* Medications List */}
-      <div className="space-y-4">
+          {/* Medications List */}
+          <div className="space-y-4">
         {medications.map((med) => {
           const checkboxes = getFrequencyCheckboxes(med.frequency)
           const medDosesCompleted = checkboxes.filter((_, idx) => completedDoses[`${med.id}_${idx}`]).length
@@ -315,6 +317,8 @@ export default function MedicationTracker({ user, medicalProfile }) {
           <strong>💡 Tip:</strong> Check off each dose as you take your medication. Progress resets daily at midnight.
         </p>
       </div>
+    </>
+  )}
     </div>
   )
 }
