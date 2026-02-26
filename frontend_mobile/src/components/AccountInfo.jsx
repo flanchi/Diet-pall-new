@@ -190,14 +190,29 @@ export default function AccountInfo({ user, profile, onProfile }) {
       </div>
 
       {/* Medical Profile Section */}
-      <div>
-        <h3 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <MaterialIcon name="local_hospital" size="28px" />
-          Medical Profile
-        </h3>
-        <p className="text-slate-600 text-sm mb-4">Update your health information to receive personalized meal plans.</p>
-        <MedicalForm onProfile={onProfile} initialProfile={profile} />
-      </div>
+      {(() => {
+        const [mpCollapsed, setMpCollapsed] = React.useState(false);
+        return (
+          <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
+            <button
+              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+              onClick={() => setMpCollapsed(c => !c)}
+            >
+              <MaterialIcon name={mpCollapsed ? "expand_more" : "expand_less"} size="20px" />
+            </button>
+            <h3 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <MaterialIcon name="local_hospital" size="28px" />
+              Medical Profile
+            </h3>
+            {!mpCollapsed && (
+              <>
+                <p className="text-slate-600 text-sm mb-4">Update your health information to receive personalized meal plans.</p>
+                <MedicalForm onProfile={onProfile} initialProfile={profile} />
+              </>
+            )}
+          </div>
+        );
+      })()}
     </div>
   )
 }
