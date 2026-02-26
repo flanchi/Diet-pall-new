@@ -80,24 +80,6 @@ export default function Hero() {
           </div>
 
 
-          {/* Stats - Collapsible Cards */}
-          <div className="grid grid-cols-3 gap-4 pt-4">
-            {[{
-              label: "Meal Plans",
-              value: "500+"
-            }, {
-              label: "Restaurants",
-              value: "50+"
-            }, {
-              label: "Health Tips",
-              value: "10+"
-            }].map((stat) => (
-              <div key={stat.label} className="text-center p-4 glass rounded-2xl relative">
-                <p className="text-3xl font-bold gradient-text">{stat.value}</p>
-                <p className="text-sm text-slate-600">{stat.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Right Side - Slideshow */}
