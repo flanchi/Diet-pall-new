@@ -13,6 +13,11 @@ export default function AccountInfo({ user, profile, onProfile }) {
   const [emergencySaved, setEmergencySaved] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  // collapse state for mobile cards
+  const [accountCollapsed, setAccountCollapsed] = useState(true);
+  const [emCollapsed, setEmCollapsed] = useState(true);
+  const [mpCollapsed, setMpCollapsed] = useState(true);
+
   // Load emergency contact from backend on mount or when user changes
   useEffect(() => {
     if (user) {
@@ -91,36 +96,52 @@ export default function AccountInfo({ user, profile, onProfile }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Account Information Card */}
-      <div className="neu-surface p-6">
+      <div className="neu-surface p-6 relative">
+        <button
+          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 shadow transition"
+          onClick={() => setAccountCollapsed(c => !c)}
+        >
+          <MaterialIcon name={accountCollapsed ? "expand_more" : "expand_less"} size="20px" />
+        </button>
         <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
           <MaterialIcon name="account_circle" size="28px" />
           Account Information
         </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-            <span className="text-slate-700 font-semibold">Name</span>
-            <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
+        {!accountCollapsed && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+              <span className="text-slate-700 font-semibold">Name</span>
+              <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
+            </div>
+            <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+              <span className="text-slate-700 font-semibold">Email</span>
+              <span className="text-slate-800 font-semibold">{user.email}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-700 font-semibold">Account Status</span>
+              <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-            <span className="text-slate-700 font-semibold">Email</span>
-            <span className="text-slate-800 font-semibold">{user.email}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-slate-700 font-semibold">Account Status</span>
-            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Emergency Contact Section */}
-      <div className="neu-surface p-6">
+      <div className="neu-surface p-6 relative">
+        <button
+          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 shadow transition"
+          onClick={() => setEmCollapsed(c => !c)}
+        >
+          <MaterialIcon name={emCollapsed ? "expand_more" : "expand_less"} size="20px" />
+        </button>
         <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
           <MaterialIcon name="emergency_share" size="28px" />
           Emergency Contact
         </h3>
-        <p className="text-slate-600 text-sm mb-4">Add an emergency contact for your safety</p>
-        
-        <div className="space-y-4">
+        {!emCollapsed && (
+          <>
+            <p className="text-slate-600 text-sm mb-4">Add an emergency contact for your safety</p>
+
+            <div className="space-y-4">
           {/* Emergency Contact Name */}
           <div>
             <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Full Name</label>
@@ -190,29 +211,24 @@ export default function AccountInfo({ user, profile, onProfile }) {
       </div>
 
       {/* Medical Profile Section */}
-      {(() => {
-        const [mpCollapsed, setMpCollapsed] = React.useState(true);
-        return (
-          <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
-            <button
-              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
-              onClick={() => setMpCollapsed(c => !c)}
-            >
-              <MaterialIcon name={mpCollapsed ? "expand_more" : "expand_less"} size="20px" />
-            </button>
-            <h3 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <MaterialIcon name="local_hospital" size="28px" />
-              Medical Profile
-            </h3>
-            {!mpCollapsed && (
-              <>
-                <p className="text-slate-600 text-sm mb-4">Update your health information to receive personalized meal plans.</p>
-                <MedicalForm onProfile={onProfile} initialProfile={profile} />
-              </>
-            )}
-          </div>
-        );
-      })()}
+      <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
+        <button
+          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+          onClick={() => setMpCollapsed(c => !c)}
+        >
+          <MaterialIcon name={mpCollapsed ? "expand_more" : "expand_less"} size="20px" />
+        </button>
+        <h3 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <MaterialIcon name="local_hospital" size="28px" />
+          Medical Profile
+        </h3>
+        {!mpCollapsed && (
+          <>
+            <p className="text-slate-600 text-sm mb-4">Update your health information to receive personalized meal plans.</p>
+            <MedicalForm onProfile={onProfile} initialProfile={profile} />
+          </>
+        )}
+      </div>
     </div>
   )
 }
