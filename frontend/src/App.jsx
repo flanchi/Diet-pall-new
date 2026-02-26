@@ -440,8 +440,8 @@ export default function App() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6 animate-fade-in -mt-20 lg:-mt-40" style={{animationDelay: "0.2s"}}>
+{/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6 animate-fade-in -mt-32 lg:-mt-56" style={{animationDelay: "0.2s"}}>
             {tab === "home" && (
               <>
                 <BiomarkerAlerts user={user} />
