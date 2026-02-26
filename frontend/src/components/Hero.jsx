@@ -79,33 +79,6 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Feature Pills */}
-          <div className="flex flex-wrap gap-3">
-            <span className="badge-secondary"> Personalized Plans</span>
-            <span className="badge-accent"> GPS-Based Locations</span>
-            <span className="badge"> AI Advisor</span>
-          </div>
-
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="pt-4">
-            <div className="flex gap-2 bg-white rounded-full shadow-lg p-1.5 card-hover">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for recipes, health tips..."
-                className="flex-1 px-6 py-3 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-gradient-to-r from-primary-600 to-primary-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-glow-primary disabled:opacity-50 flex items-center gap-2"
-              >
-                <MaterialIcon name="search" size="20px" />
-                {!loading && "Search"}
-              </button>
-            </div>
-          </form>
 
           {/* Stats - Collapsible Cards */}
           <div className="grid grid-cols-3 gap-4 pt-4">
