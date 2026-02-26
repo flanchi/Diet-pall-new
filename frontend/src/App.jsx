@@ -19,6 +19,7 @@ import Settings from "./components/Settings"
 import Subscription from "./components/Subscription"
 import ForgotPasswordPage from "./components/ForgotPasswordPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
+import ErrorBoundary from "./components/ErrorBoundary"
 
 export default function App() {
   const [mealPlan, setMealPlan] = useState(null)
@@ -200,6 +201,7 @@ export default function App() {
   }
 
   const handleLogin = (userData) => {
+    console.log("handleLogin called with", userData)
     setUser(userData)
     setIsLoggedIn(true)
     loadLatestProfile(userData)
@@ -308,7 +310,8 @@ export default function App() {
 
   // Main app after login
   return (
-    <div className="app-root min-h-screen bg-transparent">
+    <ErrorBoundary>
+      <div className="app-root min-h-screen bg-transparent">
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-50 bg-white/30 backdrop-blur-md shadow-md border-b border-white/20 animate-slide-up">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
@@ -574,5 +577,6 @@ export default function App() {
         </>
       )}
     </div>
+    </ErrorBoundary>
   )
 }
