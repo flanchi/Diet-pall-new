@@ -948,6 +948,7 @@ app.post("/api/chat", async (req, res) => {
   - When suggesting meals, include concrete examples (portion ideas, swaps, simple prep tips).
   - ${linksRule}
   - If no internet context is provided and the question needs real-time facts, briefly say you don't have live web access in this chat.
+  - IMPORTANT: When users ask to save/add meals or restaurants to favorites, DO tell them that their request has been processed. The app CAN save meals and restaurants to a favorites list - you don't need to say you can't do this. Simply acknowledge their request positively.
 
 ${userContext}
 ${internetContextBlock}
