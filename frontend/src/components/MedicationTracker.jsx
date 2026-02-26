@@ -3,6 +3,7 @@ import MaterialIcon from "../utils/MaterialIcon"
 import { generateMedicationsPDF, filterLast30Days, formatDateForDisplay } from "../utils/downloadUtils"
 
 export default function MedicationTracker({ user, medicalProfile }) {
+  const [collapsed, setCollapsed] = useState(true)
   const [medications, setMedications] = useState([])
   const [todayDate, setTodayDate] = useState(new Date().toISOString().split("T")[0])
   const [completedDoses, setCompletedDoses] = useState({})
