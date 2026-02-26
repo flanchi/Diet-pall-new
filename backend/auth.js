@@ -11,48 +11,49 @@ const RESET_TOKENS_FILE = path.join(__dirname, 'data', 'reset_tokens.json')
 const nodemailer = require('nodemailer')
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret'
 
+// Helper functions for reset tokens
+function loadResetTokens() {
+  if (fs.existsSync(RESET_TOKENS_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8'))
+    } catch (e) { return {} }
+  }
+  return {}
+}
+
+function saveResetTokens(tokens) {
+  fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(tokens, null, 2))
+}
+
+function generateResetToken() {
+  return uuidv4().replace(/-/g, '')
+}
+
+function sendResetEmail(email, token) {
+  // Configure nodemailer transport (update with your SMTP details)
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  })
+  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`
+  const mailOptions = {
+    from: process.env.SMTP_FROM || 'no-reply@dietpall.com',
+    to: email,
+    subject: 'DietPall Password Reset',
+    text: `Reset your password: ${resetUrl}`,
+    html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`
+  }
+  return transporter.sendMail(mailOptions)
+}
+
 function normalizeEmail(email) {
   if (!email) return '';
-  return String(email).trim().toLowerCase();
-  function loadResetTokens() {
-    if (fs.existsSync(RESET_TOKENS_FILE)) {
-      try {
-        return JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8'))
-      } catch (e) { return {} }
-    }
-    return {}
-  }
-
-  function saveResetTokens(tokens) {
-    fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(tokens, null, 2))
-  }
-
-  function generateResetToken() {
-    return uuidv4().replace(/-/g, '')
-  }
-
-  function sendResetEmail(email, token) {
-    // Configure nodemailer transport (update with your SMTP details)
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    })
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`
-    const mailOptions = {
-      from: process.env.SMTP_FROM || 'no-reply@dietpall.com',
-      to: email,
-      subject: 'DietPall Password Reset',
-      text: `Reset your password: ${resetUrl}`,
-      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`
-    }
-    return transporter.sendMail(mailOptions)
-  }
-  return String(email || '').trim().toLowerCase()
+  return String(email).trim().toLowerCase()
 }
 
 function makeInternalUsername() {
