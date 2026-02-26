@@ -101,27 +101,26 @@ export default function AccountInfo({ user, profile, onProfile }) {
             >
               <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
             </button>
+            {/* title always visible */}
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <MaterialIcon name="account_circle" size="28px" />
+              Account Information
+            </h3>
             {!collapsed && (
-              <>
-                <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                  <MaterialIcon name="account_circle" size="28px" />
-                  Account Information
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-                    <span className="text-slate-700 font-semibold">Name</span>
-                    <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
-                  </div>
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-300">
-                    <span className="text-slate-700 font-semibold">Email</span>
-                    <span className="text-slate-800 font-semibold">{user.email}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-700 font-semibold">Account Status</span>
-                    <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
-                  </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+                  <span className="text-slate-700 font-semibold">Name</span>
+                  <span className="text-slate-800 font-semibold">{user.name || '—'}</span>
                 </div>
-              </>
+                <div className="flex items-center justify-between pb-4 border-b border-slate-300">
+                  <span className="text-slate-700 font-semibold">Email</span>
+                  <span className="text-slate-800 font-semibold">{user.email}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-700 font-semibold">Account Status</span>
+                  <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                </div>
+              </div>
             )}
           </div>
         );
@@ -138,12 +137,13 @@ export default function AccountInfo({ user, profile, onProfile }) {
             >
               <MaterialIcon name={emCollapsed ? "expand_more" : "expand_less"} size="20px" />
             </button>
+            {/* header always shown */}
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <MaterialIcon name="emergency_share" size="28px" />
+              Emergency Contact
+            </h3>
             {!emCollapsed && (
               <>
-                <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                  <MaterialIcon name="emergency_share" size="28px" />
-                  Emergency Contact
-                </h3>
                 <p className="text-slate-600 text-sm mb-4">Add an emergency contact for your safety</p>
                 <div className="space-y-4">
                   {/* Emergency Contact Name */}
