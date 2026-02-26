@@ -11,6 +11,7 @@ import MealHistory from "./components/MealHistory"
 import FavoriteMeals from "./components/FavoriteMeals"
 import RestaurantsList from "./components/RestaurantsList"
 import FavoriteRestaurants from "./components/FavoriteRestaurants"
+import GroceryList from "./components/GroceryList"
 import AIChat from "./components/AIChat"
 import MedicalBiomarkers from "./components/MedicalBiomarkers"
 import BiomarkerAlerts from "./components/BiomarkerAlerts"
@@ -296,12 +297,13 @@ export default function App() {
     )
   }
 
-  const tabs = [
+const tabs = [
     ["home", "home", "Home"],
     ["ai", "smart_toy", "AI Advisor"],
     ["restaurants", "restaurant", "Restaurants"],
     ["history", "history", "History"],
     ["favorites", "favorite", "Favorites"],
+    ["grocery", "shopping_cart", "Grocery"],
     ["account", "account_circle", "Account"],
     ["subscription", "workspace_premium", "Subscription"],
     ["settings", "settings", "Settings"],
@@ -516,6 +518,7 @@ export default function App() {
             )}
             {tab === "restaurants" && <RestaurantsList settings={settings} />}
             {tab === "fav-rest" && <FavoriteRestaurants />}
+            {tab === "grocery" && <GroceryList />}
           </div>
 
           {/* Right Column - Sticky Sidebar */}

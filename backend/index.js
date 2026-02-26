@@ -1127,6 +1127,10 @@ app.post("/api/chat/clear", (req, res) => {
   }
 })
 
+// Note: Favorites are stored in frontend localStorage
+// The AI chat component handles adding items to favorites directly
+// These endpoints are placeholder for potential future backend persistence
+
 app.use("/api/auth", authRouter)
 
 const PORT = process.env.PORT || 4000

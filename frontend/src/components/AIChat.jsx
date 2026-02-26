@@ -5,6 +5,95 @@ import remarkGfm from "remark-gfm"
 import { API_URL } from "../config"
 import MaterialIcon from "../utils/MaterialIcon"
 
+// Helper functions to add items to favorites (called by AI)
+function addMealToFavorites(meal) {
+  try {
+    const raw = localStorage.getItem("favorite_meals")
+    const meals = raw ? JSON.parse(raw) : []
+    
+    // Check for duplicates
+    const exists = meals.some(m => m.name === meal.name)
+    if (exists) {
+      return { success: false, message: "Meal already in favorites" }
+    }
+
+    meals.push({
+      name: meal.name,
+      ingredients: meal.ingredients || [],
+      notes: meal.notes || [],
+      addedAt: new Date().toISOString()
+    })
+
+    localStorage.setItem("favorite_meals", JSON.stringify(meals))
+    return { success: true, message: `Added "${meal.name}" to favorite meals` }
+  } catch (error) {
+    console.error("Error adding meal to favorites:", error)
+    return { success: false, message: "Failed to add meal to favorites" }
+  }
+}
+
+function addRestaurantToFavorites(restaurant) {
+  try {
+    const raw = localStorage.getItem("favorite_restaurants")
+    const restaurants = raw ? JSON.parse(raw) : []
+    
+    // Check for duplicates
+    const exists = restaurants.some(r => r.name === restaurant.name)
+    if (exists) {
+      return { success: false, message: "Restaurant already in favorites" }
+    }
+
+    restaurants.push({
+      name: restaurant.name,
+      tags: restaurant.tags || [],
+      distance_km: restaurant.distance_km || null,
+      addedAt: new Date().toISOString()
+    })
+
+    localStorage.setItem("favorite_restaurants", JSON.stringify(restaurants))
+    return { success: true, message: `Added "${restaurant.name}" to favorite restaurants` }
+  } catch (error) {
+    console.error("Error adding restaurant to favorites:", error)
+    return { success: false, message: "Failed to add restaurant to favorites" }
+  }
+}
+
+function addIngredientsToShoppingList(ingredients) {
+  try {
+    if (!ingredients || !Array.isArray(ingredients)) {
+      return { success: false, message: "Invalid ingredients format" }
+    }
+
+    const raw = localStorage.getItem("shopping_list")
+    const shoppingList = raw ? JSON.parse(raw) : []
+    
+    let addedCount = 0
+    for (const ing of ingredients) {
+      const ingName = typeof ing === "string" ? ing : (ing.name || ing)
+      if (!ingName) continue
+      
+      // Check for duplicates (case-insensitive)
+      const exists = shoppingList.some(item => 
+        item.name.toLowerCase() === ingName.toLowerCase()
+      )
+      if (!exists) {
+        shoppingList.push({
+          name: ingName,
+          checked: false,
+          addedAt: new Date().toISOString()
+        })
+        addedCount++
+      }
+    }
+
+    localStorage.setItem("shopping_list", JSON.stringify(shoppingList))
+    return { success: true, message: `Added ${addedCount} ingredient(s) to shopping list` }
+  } catch (error) {
+    console.error("Error adding ingredients to shopping list:", error)
+    return { success: false, message: "Failed to add ingredients to shopping list" }
+  }
+}
+
 export default function AIChat({ user, medicalProfile, initialQuery, settings, mode = "full", minimized = false, unreadCount = 0, onToggleMinimize, onAiMessage }) {
   const [messages, setMessages] = useState([
     {
@@ -83,6 +172,77 @@ export default function AIChat({ user, medicalProfile, initialQuery, settings, m
     }
   }
 
+  // Parse user message to detect requests for adding items to favorites
+  function detectAddToFavorites(message) {
+    const text = message.toLowerCase().trim()
+    
+    // Check for adding meal to favorites
+    const mealPatterns = [
+      /add.*(meal|breakfast|lunch|dinner|snack|recipe).*(to\s+)?favorites?/i,
+      /(save|bookmark).*(meal|breakfast|lunch|dinner|snack|recipe)/i,
+      /(meal|breakfast|lunch|dinner|snack|recipe).*(to\s+)?favorites?/i
+    ]
+    
+    // Check for adding restaurant to favorites
+    const restaurantPatterns = [
+      /add.*(restaurant|cafe|food\s*place|eatery).*(to\s+)?favorites?/i,
+      /(save|bookmark).*(restaurant|cafe|food\s*place|eatery)/i,
+      /(restaurant|cafe|food\s*place|eatery).*(to\s+)?favorites?/i
+    ]
+    
+    // Check for adding ingredients to shopping list
+    const ingredientPatterns = [
+      /add.*(ingredient|items?).*(to\s+)?(shopping\s*list|grocery)/i,
+      /(put|add).*(shopping\s*list|grocery)/i,
+      /(ingredient|items?).*(to\s+)?(shopping\s*list|grocery)/i
+    ]
+
+    // Check for meal patterns
+    for (const pattern of mealPatterns) {
+      if (pattern.test(text)) return "add_meal"
+    }
+
+    // Check for restaurant patterns
+    for (const pattern of restaurantPatterns) {
+      if (pattern.test(text)) return "add_restaurant"
+    }
+
+    // Check for ingredient patterns
+    for (const pattern of ingredientPatterns) {
+      if (pattern.test(text)) return "add_ingredients"
+    }
+
+    return null
+  }
+
+  // Extract meal info from message context
+  function extractMealFromContext(msgs) {
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const msg = msgs[i]
+      if (msg.sender === "ai" && msg.text) {
+        const mealMatch = msg.text.match(/[-*]?\s*\*\*(?:Breakfast|Lunch|Dinner|Snack):?\s*\*\*?\s*([^\n*]+)/i)
+        if (mealMatch) {
+          return { name: mealMatch[1].trim() }
+        }
+      }
+    }
+    return null
+  }
+
+  // Extract restaurant info from message context
+  function extractRestaurantFromContext(msgs) {
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const msg = msgs[i]
+      if (msg.sender === "ai" && msg.text) {
+        const restMatch = msg.text.match(/(?:restaurant|cafe|eatery)[:\s]+([^\n]+)/i)
+        if (restMatch) {
+          return { name: restMatch[1].trim(), tags: [] }
+        }
+      }
+    }
+    return null
+  }
+
   // Call backend /api/chat endpoint
   async function generateAIResponse(userMessage, history) {
     try {
@@ -112,8 +272,12 @@ export default function AIChat({ user, medicalProfile, initialQuery, settings, m
     }
   }
 
-  async function handleSendWithMessage(message) {
+async function handleSendWithMessage(message) {
     if (!message.trim()) return
+
+    // Check if user wants to add something to favorites
+    const addRequest = detectAddToFavorites(message)
+    let actionResult = null
 
     // Add user message
     const userMsg = createMessage("user", message)
@@ -123,10 +287,49 @@ export default function AIChat({ user, medicalProfile, initialQuery, settings, m
 
     // Get AI response from backend
     const aiResponse = await generateAIResponse(message, history)
-    const aiMsg = createMessage("ai", aiResponse)
+    
+    // If user requested to add something to favorites, process it
+    if (addRequest === "add_meal") {
+      const meal = extractMealFromContext([...messages, userMsg])
+      if (meal) {
+        actionResult = addMealToFavorites(meal)
+      } else {
+        actionResult = { success: false, message: "Could not find a meal to add. Please specify which meal you'd like to add." }
+      }
+    } else if (addRequest === "add_restaurant") {
+      const restaurant = extractRestaurantFromContext([...messages, userMsg])
+      if (restaurant) {
+        actionResult = addRestaurantToFavorites(restaurant)
+      } else {
+        actionResult = { success: false, message: "Could not find a restaurant to add." }
+      }
+    } else if (addRequest === "add_ingredients") {
+      // Try to extract ingredients from the message
+      const ingredientMatch = message.match(/(?:ingredients?|items?|for)\s*:?\s*([^\n?]+)/i)
+      if (ingredientMatch) {
+        const ingredients = ingredientMatch[1].split(/[,;]/).map(i => i.trim()).filter(i => i.length > 0)
+        if (ingredients.length > 0) {
+          actionResult = addIngredientsToShoppingList(ingredients)
+        }
+      }
+      if (!actionResult) {
+        actionResult = { success: false, message: "Could not extract ingredients. Please specify which ingredients to add." }
+      }
+    }
+
+    // Append action result to AI response if applicable
+    let finalResponse = aiResponse
+    if (actionResult) {
+      const actionMessage = actionResult.success 
+        ? `✅ ${actionResult.message}`
+        : `⚠️ ${actionResult.message}`
+      finalResponse = `${aiResponse}\n\n${actionMessage}`
+    }
+
+    const aiMsg = createMessage("ai", finalResponse)
     setMessages(prev => [...prev, aiMsg])
     if (typeof onAiMessage === "function") {
-      onAiMessage({ text: aiResponse, wasMinimized: minimizedRef.current })
+      onAiMessage({ text: finalResponse, wasMinimized: minimizedRef.current })
     }
     setLoading(false)
   }
