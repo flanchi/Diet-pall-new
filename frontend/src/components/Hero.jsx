@@ -118,25 +118,12 @@ export default function Hero() {
             }, {
               label: "Health Tips",
               value: "10+"
-            }].map((stat, idx) => {
-              const [collapsed, setCollapsed] = React.useState(false);
-              return (
-                <div key={stat.label} className="text-center p-4 glass rounded-2xl relative">
-                  <button
-                    className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
-                    onClick={() => setCollapsed((c) => !c)}
-                  >
-                    {collapsed ? "Expand" : "Collapse"}
-                  </button>
-                  {!collapsed && (
-                    <>
-                      <p className="text-3xl font-bold gradient-text">{stat.value}</p>
-                      <p className="text-sm text-slate-600">{stat.label}</p>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+            }].map((stat) => (
+              <div key={stat.label} className="text-center p-4 glass rounded-2xl relative">
+                <p className="text-3xl font-bold gradient-text">{stat.value}</p>
+                <p className="text-sm text-slate-600">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
 
