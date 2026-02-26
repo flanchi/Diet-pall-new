@@ -9,7 +9,7 @@ export default function MedicalBiomarkers({ user }) {
   const [loading, setLoading] = useState(false)
   const [expandedEntry, setExpandedEntry] = useState(null)
   const [showForm, setShowForm] = useState(false)
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
   const [formData, setFormData] = useState({
     biomarkerType: "blood-pressure",
     value1: "",
@@ -473,11 +473,9 @@ export default function MedicalBiomarkers({ user }) {
         </div>
       </div>
 
-      {!collapsed && (
-        <>
-          {/* Add Entry Form */}
-          {showForm && (
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
+      {/* Add Entry Form */}
+      {showForm && (
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
           <div className="space-y-3">
             <label className="block">
               <span className="text-sm font-semibold text-slate-700">Biomarker Type</span>
@@ -639,8 +637,7 @@ export default function MedicalBiomarkers({ user }) {
 
       {/* Summary Stats */}
       {biomarkers.length > 0 && (
-        <>
-          <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
+        <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
           <p className="text-xs font-semibold text-slate-700">
             📈 Total Tracked: <span className="text-blue-600">{biomarkers.length} entries</span> from{" "}
             <span className="text-blue-600">

@@ -19,27 +19,6 @@ export default function Hero() {
     []
   )
 
-  // card sub-component for stats (defined here to keep file self-contained)
-  function StatCard({ label, value }) {
-    const [collapsed, setCollapsed] = useState(false)
-    return (
-      <div className="text-center p-4 glass rounded-2xl relative">
-        <button
-          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
-          onClick={() => setCollapsed((c) => !c)}
-        >
-          {collapsed ? "Expand" : "Collapse"}
-        </button>
-        {!collapsed && (
-          <>
-            <p className="text-3xl font-bold gradient-text">{value}</p>
-            <p className="text-sm text-slate-600">{label}</p>
-          </>
-        )}
-      </div>
-    )
-  }
-
   useEffect(() => {
     const loadSlides = () => {
       try {
@@ -130,7 +109,6 @@ export default function Hero() {
 
           {/* Stats - Collapsible Cards */}
           <div className="grid grid-cols-3 gap-4 pt-4">
-            {/* simple component so each card can manage its own collapse state */}
             {[{
               label: "Meal Plans",
               value: "500+"
@@ -140,13 +118,26 @@ export default function Hero() {
             }, {
               label: "Health Tips",
               value: "10+"
-            }].map((stat) => (
-              <StatCard key={stat.label} label={stat.label} value={stat.value} />
-            ))}
+            }].map((stat, idx) => {
+              const [collapsed, setCollapsed] = React.useState(false);
+              return (
+                <div key={stat.label} className="text-center p-4 glass rounded-2xl relative">
+                  <button
+                    className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-semibold shadow transition"
+                    onClick={() => setCollapsed((c) => !c)}
+                  >
+                    {collapsed ? "Expand" : "Collapse"}
+                  </button>
+                  {!collapsed && (
+                    <>
+                      <p className="text-3xl font-bold gradient-text">{stat.value}</p>
+                      <p className="text-sm text-slate-600">{stat.label}</p>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
-
-          {/* component used above */}
-          
         </div>
 
         {/* Right Side - Slideshow */}

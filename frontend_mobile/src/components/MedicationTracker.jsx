@@ -6,7 +6,7 @@ export default function MedicationTracker({ user, medicalProfile }) {
   const [medications, setMedications] = useState([])
   const [todayDate, setTodayDate] = useState(new Date().toISOString().split("T")[0])
   const [completedDoses, setCompletedDoses] = useState({})
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
 
   useEffect(() => {
     loadMedications()
