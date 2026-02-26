@@ -446,11 +446,8 @@ export default function MedicalBiomarkers({ user }) {
           </h3>
           <p className="text-sm text-slate-600">Track your daily health metrics and test results</p>
         </div>
-      </div>
-
-      {!collapsed && (
-        <>
-          <div className="flex items-center gap-2">
+        {/* Buttons visible in both collapsed and expanded states */}
+        <div className="flex items-center gap-2">
           <button
             onClick={handleDownloadBiomarkers}
             disabled={biomarkers.length === 0}
@@ -477,8 +474,10 @@ export default function MedicalBiomarkers({ user }) {
             )}
           </button>
         </div>
+      </div>
 
-      {/* Add Entry Form */}
+      {!collapsed && (
+        <>
       {showForm && (
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
           <div className="space-y-3">
