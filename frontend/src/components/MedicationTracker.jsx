@@ -199,7 +199,14 @@ export default function MedicationTracker({ user, medicalProfile }) {
   }
 
   return (
-    <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
+    <div className="glass relative rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
+      {/* collapse toggle */}
+      <button
+        className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+        onClick={() => setCollapsed((c) => !c)}
+      >
+        <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
+      </button>
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>
