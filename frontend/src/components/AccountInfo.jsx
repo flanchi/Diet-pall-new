@@ -92,7 +92,7 @@ export default function AccountInfo({ user, profile, onProfile }) {
     <div className="space-y-6 animate-fade-in">
       {/* Account Information Card - Collapsible */}
       {(() => {
-        const [collapsed, setCollapsed] = React.useState(false);
+        const [collapsed, setCollapsed] = React.useState(true);
         return (
           <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
             <button
@@ -128,7 +128,7 @@ export default function AccountInfo({ user, profile, onProfile }) {
 
       {/* Emergency Contact Section */}
       {(() => {
-        const [emCollapsed, setEmCollapsed] = React.useState(false);
+        const [emCollapsed, setEmCollapsed] = React.useState(true);
         return (
           <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
             <button
@@ -220,7 +220,7 @@ export default function AccountInfo({ user, profile, onProfile }) {
 
       {/* Medical Profile Section */}
       {(() => {
-        const [mpCollapsed, setMpCollapsed] = React.useState(false);
+        const [mpCollapsed, setMpCollapsed] = React.useState(true);
         return (
           <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
             <button

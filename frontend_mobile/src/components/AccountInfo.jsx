@@ -191,7 +191,7 @@ export default function AccountInfo({ user, profile, onProfile }) {
 
       {/* Medical Profile Section */}
       {(() => {
-        const [mpCollapsed, setMpCollapsed] = React.useState(false);
+        const [mpCollapsed, setMpCollapsed] = React.useState(true);
         return (
           <div className="glass rounded-2xl shadow-lg p-6 border border-white/20 backdrop-blur-sm bg-white/40 relative">
             <button
