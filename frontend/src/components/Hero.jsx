@@ -85,7 +85,7 @@ export default function Hero() {
         {/* Right Side - Slideshow */}
         <div className="relative hidden lg:flex items-center justify-center justify-self-end">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl blur-2xl opacity-50"></div>
-          <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-card border border-white/20 w-full max-w-sm mt-4 lg:mt-8 ml-auto">
+          <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-card border border-white/20 w-full max-w-sm mt-4 lg:mt-8 ml-auto min-h-[420px] lg:min-h-[480px]">
             {/* Tab Navigation */}
             <div className="flex gap-2 mb-6 border-b border-slate-200 pb-3">
               <button
@@ -123,9 +123,11 @@ export default function Hero() {
               </button>
             </div>
 
-            {/* Meals Tab */}
-            {activeTab === "meals" && slides.length > 0 && (
-              <div className="space-y-4 animate-fade-in">
+            {/* Tab Content (centered) */}
+            <div className="flex-1 flex flex-col justify-center">
+              {/* Meals Tab */}
+              {activeTab === "meals" && slides.length > 0 && (
+                <div className="space-y-4 animate-fade-in">
                 <div className="h-36 rounded-2xl bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center text-5xl">
                   {slides[slideIndex]?.emoji || "🍽️"}
                 </div>
@@ -142,46 +144,47 @@ export default function Hero() {
                   ))}
                 </div>
                 <p className="text-xs text-slate-500">Uses favorites and history when available.</p>
-              </div>
-            )}
+                </div>
+              )}
 
-            {/* Restaurants Tab */}
-            {activeTab === "restaurants" && (
-              <div className="space-y-4 animate-fade-in">
-                <div className="h-36 rounded-2xl bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-5xl">
-                  🏪
+              {/* Restaurants Tab */}
+              {activeTab === "restaurants" && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="h-36 rounded-2xl bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-5xl">
+                    🏪
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-slate-900">Nearby Restaurants</p>
+                    <p className="text-sm text-slate-600">GPS-powered recommendations</p>
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <p className="text-xs text-slate-500">Find local restaurants matching your dietary preferences</p>
+                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all">
+                      View Restaurants
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xl font-bold text-slate-900">Nearby Restaurants</p>
-                  <p className="text-sm text-slate-600">GPS-powered recommendations</p>
-                </div>
-                <div className="space-y-2 pt-2">
-                  <p className="text-xs text-slate-500">Find local restaurants matching your dietary preferences</p>
-                  <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all">
-                    View Restaurants
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Grocery Tab */}
-            {activeTab === "grocery" && (
-              <div className="space-y-4 animate-fade-in">
-                <div className="h-36 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center text-5xl">
-                  🛒
+              {/* Grocery Tab */}
+              {activeTab === "grocery" && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="h-36 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center text-5xl">
+                    🛒
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-slate-900">Shopping List</p>
+                    <p className="text-sm text-slate-600">Suggested grocery items</p>
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <p className="text-xs text-slate-500">Stock up on healthy ingredients from local stores</p>
+                    <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all">
+                      View Products
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xl font-bold text-slate-900">Shopping List</p>
-                  <p className="text-sm text-slate-600">Suggested grocery items</p>
-                </div>
-                <div className="space-y-2 pt-2">
-                  <p className="text-xs text-slate-500">Stock up on healthy ingredients from local stores</p>
-                  <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all">
-                    View Products
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
