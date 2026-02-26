@@ -6,6 +6,7 @@ export default function MedicationTracker({ user, medicalProfile }) {
   const [medications, setMedications] = useState([])
   const [todayDate, setTodayDate] = useState(new Date().toISOString().split("T")[0])
   const [completedDoses, setCompletedDoses] = useState({})
+  const [collapsed, setCollapsed] = useState(true)
 
   useEffect(() => {
     loadMedications()
@@ -183,24 +184,17 @@ export default function MedicationTracker({ user, medicalProfile }) {
     }
   }
 
-  if (medications.length === 0) {
-    return (
-      <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40">
-        <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <MaterialIcon name="medication" size="28px" />
-          Medication Tracker
-        </h3>
-        <p className="text-sm text-slate-600">
-          No medications found. Add medications in your medical profile to start tracking.
-        </p>
-      </div>
-    )
-  }
 
   return (
     <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 relative">
+        <button
+          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+          onClick={() => setCollapsed(c => !c)}
+        >
+          <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
+        </button>
         <div>
           <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <MaterialIcon name="medication" size="28px" />
@@ -218,8 +212,16 @@ export default function MedicationTracker({ user, medicalProfile }) {
         </button>
       </div>
 
-      {/* Progress Bar */}
-      <div className="space-y-2">
+      {!collapsed && (
+        <>
+          {medications.length === 0 ? (
+            <div className="text-sm text-slate-600 py-4">
+              No medications found. Add medications in your medical profile to start tracking.
+            </div>
+          ) : (
+            <>
+              {/* Progress Bar */}
+              <div className="space-y-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
           <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>
@@ -314,6 +316,8 @@ export default function MedicationTracker({ user, medicalProfile }) {
           <strong>💡 Tip:</strong> Check off each dose as you take your medication. Progress resets daily at midnight.
         </p>
       </div>
+      </>
+      )}
     </div>
   )
 }

@@ -429,7 +429,7 @@ export default function MedicalBiomarkers({ user }) {
   return (
     <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 relative">
         <div>
           <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <MaterialIcon name="monitor_heart" size="28px" />
@@ -437,6 +437,12 @@ export default function MedicalBiomarkers({ user }) {
           </h3>
           <p className="text-sm text-slate-600">Track your daily health metrics and test results</p>
         </div>
+        <button
+          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+          onClick={() => setCollapsed(c => !c)}
+        >
+          <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
+        </button>
         <div className="flex items-center gap-2">
           <button
             onClick={handleDownloadBiomarkers}
@@ -466,9 +472,11 @@ export default function MedicalBiomarkers({ user }) {
         </div>
       </div>
 
-      {/* Add Entry Form */}
-      {showForm && (
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
+      {!collapsed && (
+        <>
+          {/* Add Entry Form */}
+          {showForm && (
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
           <div className="space-y-3">
             <label className="block">
               <span className="text-sm font-semibold text-slate-700">Biomarker Type</span>
@@ -630,7 +638,8 @@ export default function MedicalBiomarkers({ user }) {
 
       {/* Summary Stats */}
       {biomarkers.length > 0 && (
-        <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
+        <>
+          <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-3 border border-blue-200">
           <p className="text-xs font-semibold text-slate-700">
             📈 Total Tracked: <span className="text-blue-600">{biomarkers.length} entries</span> from{" "}
             <span className="text-blue-600">
