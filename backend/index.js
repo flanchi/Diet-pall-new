@@ -1128,9 +1128,70 @@ app.post("/api/chat/clear", (req, res) => {
   }
 })
 
-// Note: Favorites are stored in frontend localStorage
-// The AI chat component handles adding items to favorites directly
-// These endpoints are placeholder for potential future backend persistence
+// POST /api/ai-helper - Invisible AI helper that processes requests to add items
+// This runs in the background and extracts items from conversation to add to favorites/shopping list
+app.post("/api/ai-helper", async (req, res) => {
+  try {
+    const { history, action } = req.body
+
+    if (!history || !Array.isArray(history)) {
+      return res.status(400).json({ error: "history array required" })
+    }
+
+    // Build a prompt to analyze the conversation and extract items
+    const recentHistory = history.slice(-6).map(msg => 
+      `${msg.role}: ${msg.content}`
+    ).join("\n")
+
+    const systemPrompt = `You are an AI helper that extracts structured data from chat conversations.
+Your task is to analyze the chat history and extract items that the user wants to add to their favorites or shopping list.
+
+Return ONLY valid JSON with this exact structure:
+{
+  "action": "add_to_favorites" | "add_to_shopping_list" | "none",
+  "items": [
+    { "name": "...", "ingredients": ["..."], "notes": ["..."] }
+  ],
+  "reason": "explanation of why these items were extracted"
+}
+
+Rules:
+- If the user explicitly asked to add something to favorites, set action to "add_to_favorites"
+- If the user explicitly asked to add ingredients to shopping list, set action to "add_to_shopping_list"
+- Look for meal names, restaurant names, or ingredient lists in the conversation
+- For meals: extract name, ingredients, and any notes
+- For ingredients: extract just the name
+- If no clear request to add items exists, return action: "none" with empty items array
+- Only return items that were explicitly requested to be added, not all items mentioned`
+
+    const userPrompt = `Analyze this chat conversation and extract any items the user wants to add to favorites or shopping list:\n\n${recentHistory}\n\nWhat does the user want to add?`
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ]
+
+    const result = await generateChat(messages, {
+      githubPreferredModels: GITHUB_MODEL ? [GITHUB_MODEL] : [],
+      maxTokens: 500
+    })
+
+    const jsonBlock = extractJsonBlock(result.text)
+    if (!jsonBlock) {
+      return res.json({ action: "none", items: [], reason: "Could not parse AI response" })
+    }
+
+    const parsed = JSON.parse(jsonBlock)
+    res.json({
+      action: parsed.action || "none",
+      items: Array.isArray(parsed.items) ? parsed.items : [],
+      reason: parsed.reason || ""
+    })
+  } catch (error) {
+    console.error("AI Helper Error:", error.message)
+    res.status(500).json({ error: "AI helper failed", details: error.message })
+  }
+})
 
 app.use("/api/auth", authRouter)
 

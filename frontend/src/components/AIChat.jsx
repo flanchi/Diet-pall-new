@@ -326,12 +326,57 @@ export default function AIChat({ user, medicalProfile, initialQuery, settings, m
     }
   }
 
-async function handleSendWithMessage(message) {
-    if (!message.trim()) return
+  // Call the invisible AI helper to process items to add
+  async function callAIHelper(currentMessages, latestUserMsg, latestAiMsg) {
+    try {
+      // Build the full conversation history for the helper
+      const historyForHelper = currentMessages
+        .filter(msg => msg.text)
+        .map(msg => ({
+          role: msg.sender === "user" ? "user" : "assistant",
+          content: msg.text
+        }))
+      
+      // Add the latest messages
+      historyForHelper.push({ role: "user", content: latestUserMsg })
+      historyForHelper.push({ role: "assistant", content: latestAiMsg })
 
-    // Check if user wants to add something to favorites
-    const addRequest = detectAddToFavorites(message)
-    let actionResult = null
+      const response = await axios.post(`${API_URL}/api/ai-helper`, {
+        history: historyForHelper
+      })
+
+      const { action, items } = response.data || {}
+      
+      if (!items || items.length === 0 || action === "none") {
+        return null
+      }
+
+      // Process the items based on action
+      if (action === "add_to_favorites") {
+        for (const item of items) {
+          if (item.ingredients) {
+            // It's a meal
+            addMealToFavorites(item)
+          } else {
+            // It's a restaurant
+            addRestaurantToFavorites(item)
+          }
+        }
+        return { success: true, message: `Added ${items.length} item(s) to favorites` }
+      } else if (action === "add_to_shopping_list") {
+        const ingredients = items.map(item => item.name || item)
+        return addIngredientsToShoppingList(ingredients)
+      }
+      
+      return null
+    } catch (error) {
+      console.error("AI Helper Error:", error)
+      return null
+    }
+  }
+
+  async function handleSendWithMessage(message) {
+    if (!message.trim()) return
 
     // Add user message
     const userMsg = createMessage("user", message)
@@ -342,74 +387,31 @@ async function handleSendWithMessage(message) {
     // Get AI response from backend
     const aiResponse = await generateAIResponse(message, history)
     
-    // If user requested to add something to favorites, process it
-    if (addRequest === "add_meal") {
-      const meal = extractMealFromContext([...messages, userMsg])
-      if (meal) {
-        actionResult = addMealToFavorites(meal)
-      } else {
-        actionResult = { success: false, message: "Could not find a meal to add. Please specify which meal you'd like to add." }
-      }
-    } else if (addRequest === "add_restaurant") {
-      const restaurant = extractRestaurantFromContext([...messages, userMsg])
-      if (restaurant) {
-        actionResult = addRestaurantToFavorites(restaurant)
-      } else {
-        actionResult = { success: false, message: "Could not find a restaurant to add." }
-      }
-    } else if (addRequest === "add_ingredients") {
-      // Try to extract ingredients from the user's message first
-      let ingredients = []
-      
-      // Look in user's message for ingredients
-      const ingredientMatch = message.match(/(?:ingredients?|items?|for)\s*:?\s*([^\n?]+)/i)
-      if (ingredientMatch) {
-        ingredients = ingredientMatch[1].split(/[,;]/).map(i => i.trim()).filter(i => i.length > 0)
-      }
-      
-      // If not found in user message, try to extract from AI response
-      if (ingredients.length === 0) {
-        for (let i = messages.length - 1; i >= 0; i--) {
-          const msg = messages[i]
-          if (msg.sender === "ai" && msg.text) {
-            const text = msg.text
-            
-            // Look for "Ingredients:" section in AI response
-            const ingredientsSection = text.match(/Ingredients:?\s*([^\n]+(?:\n[^\n]+)*?)(?:\n\n|\n#|#\s|$)/i)
-            if (ingredientsSection) {
-              const ingText = ingredientsSection[1]
-              ingredients = ingText.split(/[,•\n]/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 50)
-              break
-            }
-            
-            // Also look for bullet points that look like ingredients
-            const bulletIngredients = text.match(/(?:[-*•]\s*)([A-Za-z\s]+(?:chicken|beef|pork|fish|vegetable|rice|pasta|potato|tomato|onion|garlic|carrot|broccoli|spinach|lettuce|cucumber|pepper|salt|oil|butter|cheese|bread|milk|egg|flour|sugar|lemon|lime|herb|basil|thyme|oregano)[^\n,.]*)/gi)
-            if (bulletIngredients && bulletIngredients.length > 0) {
-              ingredients = bulletIngredients.map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(s => s.length > 0 && s.length < 50)
-              break
-            }
-          }
-        }
-      }
-      
-      if (ingredients.length > 0) {
-        actionResult = addIngredientsToShoppingList(ingredients)
-      } else {
-        actionResult = { success: false, message: "Could not extract ingredients. Please specify which ingredients to add." }
-      }
-    }
-
-    // Append action result to AI response if applicable
-    let finalResponse = aiResponse
-    if (actionResult) {
-      const actionMessage = actionResult.success 
-        ? `✅ ${actionResult.message}`
-        : `⚠️ ${actionResult.message}`
-      finalResponse = `${aiResponse}\n\n${actionMessage}`
-    }
-
-    const aiMsg = createMessage("ai", finalResponse)
+    // Create the AI message first
+    const aiMsgContent = aiResponse
+    const aiMsg = createMessage("ai", aiMsgContent)
+    
+    // Add AI message to state
     setMessages(prev => [...prev, aiMsg])
+    
+    // Call the invisible AI helper to process any items to add
+    // This runs AFTER the AI response, using the full conversation
+    const helperResult = await callAIHelper([...messages, userMsg], message, aiResponse)
+    
+    // If helper found items to add, append result to the AI response
+    let finalResponse = aiResponse
+    if (helperResult && helperResult.success) {
+      const actionMessage = `✅ ${helperResult.message}`
+      finalResponse = `${aiResponse}\n\n${actionMessage}`
+      
+      // Update the last message with the result
+      setMessages(prev => {
+        const updated = [...prev]
+        updated[updated.length - 1] = { ...updated[updated.length - 1], text: finalResponse }
+        return updated
+      })
+    }
+
     if (typeof onAiMessage === "function") {
       onAiMessage({ text: finalResponse, wasMinimized: minimizedRef.current })
     }
