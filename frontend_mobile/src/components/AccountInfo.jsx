@@ -62,7 +62,8 @@ export default function AccountInfo({ user, profile, onProfile }) {
     }
     
     // Validate Trinidad and Tobago phone format (starts with +1 868 or 0 followed by 7-10 digits)
-    const phoneRegex = /^(\+?1\s?868|0)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{4}$/
+    // use RegExp constructor and explicit semicolons to avoid parsing errors on build
+    const phoneRegex = new RegExp('^(\\+?1\\s?868|0)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{4}$');
     if (!phoneRegex.test(emergencyContact.phone.replace(/\s/g, ''))) {
       alert('Please enter a valid Trinidad and Tobago phone number (e.g., +1 868 123 4567 or 0123 4567)')
       return
