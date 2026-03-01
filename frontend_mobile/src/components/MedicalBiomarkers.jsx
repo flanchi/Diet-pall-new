@@ -9,7 +9,7 @@ export default function MedicalBiomarkers({ user }) {
   const [loading, setLoading] = useState(false)
   const [expandedEntry, setExpandedEntry] = useState(null)
   const [showForm, setShowForm] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   const [formData, setFormData] = useState({
     biomarkerType: "blood-pressure",
     value1: "",
@@ -473,6 +473,8 @@ export default function MedicalBiomarkers({ user }) {
         </div>
       </div>
 
+      {!collapsed && (
+        <>
       {/* Add Entry Form */}
       {showForm && (
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-200 space-y-4 animate-fade-in">
@@ -646,6 +648,7 @@ export default function MedicalBiomarkers({ user }) {
           </p>
         </div>
       )}
+        </>
       )}
     </div>
   )
