@@ -275,6 +275,14 @@ export default function App() {
           </div>
           <div className="animate-slide-up">
             <AuthForm onAuth={handleLogin} />
+            <div className="mt-4 text-center">
+              <button
+                className="text-primary-500 hover:underline font-semibold text-sm"
+                onClick={() => setTab("forgot")}
+              >
+                Forgot password?
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -504,6 +512,15 @@ export default function App() {
             {tab === "favorites" && <MergedFavorites />}
             {tab === "grocery" && <GroceryList />}
             {tab === "contact" && <Contact />}
+            {tab === "subscription" && <Subscription />}
+            {tab === "settings" && (
+              <Settings
+                settings={settings}
+                onChange={setSettings}
+                onClearChatMemory={clearChatMemory}
+                onClearLocalProfile={clearLocalProfile}
+              />
+            )}
           </div>
 
           {/* Right Column - Sticky Sidebar */}
