@@ -16,6 +16,7 @@ import BiomarkerAlerts from "./components/BiomarkerAlerts"
 import MedicationTracker from "./components/MedicationTracker"
 import Settings from "./components/Settings"
 import Subscription from "./components/Subscription"
+import Contact from "./components/Contact"
 import ForgotPasswordPage from "./components/ForgotPasswordPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
 import ErrorBoundary from "./components/ErrorBoundary"
@@ -401,6 +402,16 @@ const tabs = [
                     </button>
                     <button
                       onClick={() => {
+                        setTab("contact")
+                        setIsUserMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+                    >
+                      <MaterialIcon name="phone" size="18px" />
+                      Contact
+                    </button>
+                    <button
+                      onClick={() => {
                         setTab("home")
                         setIsUserMenuOpen(false)
                       }}
@@ -489,6 +500,16 @@ const tabs = [
                 user={user}
                 profile={medicalProfile}
                 onProfile={(profile) => setMedicalProfile(profile)}
+              />
+            )}
+            {tab === "contact" && <Contact />}
+            {tab === "subscription" && <Subscription />}
+            {tab === "settings" && (
+              <Settings
+                settings={settings}
+                onChange={setSettings}
+                onClearChatMemory={clearChatMemory}
+                onClearLocalProfile={clearLocalProfile}
               />
             )}
             {tab === "favorites" && <MergedFavorites />}
