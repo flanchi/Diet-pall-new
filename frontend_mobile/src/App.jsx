@@ -7,16 +7,19 @@ import AuthForm from "./components/AuthForm"
 import MealPlanDisplay from "./components/MealPlanDisplay"
 import Hero from "./components/Hero"
 import AccountInfo from "./components/AccountInfo"
-import MealHistory from "./components/MealHistory"
-import FavoriteMeals from "./components/FavoriteMeals"
-import RestaurantsList from "./components/RestaurantsList"
-import FavoriteRestaurants from "./components/FavoriteRestaurants"
+import MergedRestaurants from "./components/MergedRestaurants"
+import MergedFavorites from "./components/MergedFavorites"
+import GroceryList from "./components/GroceryList"
 import AIChat from "./components/AIChat"
 import MedicalBiomarkers from "./components/MedicalBiomarkers"
 import BiomarkerAlerts from "./components/BiomarkerAlerts"
 import MedicationTracker from "./components/MedicationTracker"
 import Settings from "./components/Settings"
 import Subscription from "./components/Subscription"
+import Contact from "./components/Contact"
+import ForgotPasswordPage from "./components/ForgotPasswordPage"
+import ResetPasswordPage from "./components/ResetPasswordPage"
+import ErrorBoundary from "./components/ErrorBoundary"
 
 export default function App() {
   const [mealPlan, setMealPlan] = useState(null)
@@ -282,12 +285,9 @@ export default function App() {
     ["home", "home", "Home"],
     ["ai", "smart_toy", "AI Advisor"],
     ["restaurants", "restaurant", "Restaurants"],
-    ["history", "history", "History"],
     ["favorites", "favorite", "Favorites"],
-    ["account", "account_circle", "Account"],
-    ["subscription", "workspace_premium", "Subscription"],
-    ["settings", "settings", "Settings"],
-    ["fav-rest", "bookmark", "Saved"]
+    ["grocery", "shopping_cart", "Grocery"],
+    ["account", "account_circle", "Account"]
   ]
 
   const quickTabs = [
@@ -392,6 +392,16 @@ export default function App() {
                     </button>
                     <button
                       onClick={() => {
+                        setTab("contact")
+                        setIsUserMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+                    >
+                      <MaterialIcon name="phone" size="18px" />
+                      Contact
+                    </button>
+                    <button
+                      onClick={() => {
                         setTab("home")
                         setIsUserMenuOpen(false)
                       }}
@@ -482,17 +492,6 @@ export default function App() {
                 onProfile={(profile) => setMedicalProfile(profile)}
               />
             )}
-            {tab === "subscription" && <Subscription />}
-            {tab === "settings" && (
-              <Settings
-                settings={settings}
-                onChange={setSettings}
-                onClearChatMemory={clearChatMemory}
-                onClearLocalProfile={clearLocalProfile}
-              />
-            )}
-            {tab === "history" && <MealHistory />}
-            {tab === "favorites" && <FavoriteMeals />}
             {tab === "ai" && (
               <AIChat
                 user={user}
@@ -501,8 +500,10 @@ export default function App() {
                 settings={settings}
               />
             )}
-            {tab === "restaurants" && <RestaurantsList settings={settings} />}
-            {tab === "fav-rest" && <FavoriteRestaurants />}
+            {tab === "restaurants" && <MergedRestaurants settings={settings} />}
+            {tab === "favorites" && <MergedFavorites />}
+            {tab === "grocery" && <GroceryList />}
+            {tab === "contact" && <Contact />}
           </div>
 
           {/* Right Column - Sticky Sidebar */}
