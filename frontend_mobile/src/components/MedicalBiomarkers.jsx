@@ -430,8 +430,8 @@ export default function MedicalBiomarkers({ user }) {
   return (
     <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 relative">
-        <div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1">
           <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <MaterialIcon name="monitor_heart" size="28px" />
             Medical Biomarkers
@@ -439,7 +439,7 @@ export default function MedicalBiomarkers({ user }) {
           <p className="text-sm text-slate-600">Track your daily health metrics and test results</p>
         </div>
         <button
-          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
+          className="flex-shrink-0 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
           onClick={() => setCollapsed(c => !c)}
         >
           <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
