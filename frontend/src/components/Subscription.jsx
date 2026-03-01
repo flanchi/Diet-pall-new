@@ -43,8 +43,7 @@ const PLAN_OPTIONS = [
       "Safety Guardrails (Critical Alerts)",
       "PDF Download Reports",
       "Unlimited AI chat responses",
-      "POI restaurant filtering",
-      "Free one-on-one consultation (1x per year)"
+      "POI restaurant filtering"
     ]
   }
 ]
@@ -79,7 +78,7 @@ export default function Subscription() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {PLAN_OPTIONS.map((plan) => {
           const isSelected = selectedPlan === plan.key
-          const isPremium = plan.key === "premium"
+          const isStandard = plan.key === "standard"
           
           return (
             <div
@@ -88,7 +87,7 @@ export default function Subscription() {
                 isSelected ? "border-primary-500 ring-2 ring-primary-200" : "border-white/20"
               }`}
             >
-              {isPremium && (
+              {isStandard && (
                 <div className="mb-3 inline-flex items-center gap-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold w-fit">
                   <MaterialIcon name="star" size="14px" filled={true} />
                   Most Popular
