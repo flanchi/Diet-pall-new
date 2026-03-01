@@ -430,21 +430,23 @@ export default function MedicalBiomarkers({ user }) {
   return (
     <div className="glass rounded-2.5xl p-6 border border-white/20 shadow-lg backdrop-blur-sm bg-white/40 space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 relative">
-        <div>
-          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <MaterialIcon name="monitor_heart" size="28px" />
-            Medical Biomarkers
-          </h3>
-          <p className="text-sm text-slate-600">Track your daily health metrics and test results</p>
+      <div className="space-y-3">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <MaterialIcon name="monitor_heart" size="28px" />
+              Medical Biomarkers
+            </h3>
+            <p className="text-sm text-slate-600">Track your daily health metrics and test results</p>
+          </div>
+          <button
+            className="flex-shrink-0 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition -mt-1"
+            onClick={() => setCollapsed(c => !c)}
+          >
+            <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
+          </button>
         </div>
-        <button
-          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-primary-100 text-primary-700 rounded-full p-1 text-base font-semibold shadow transition"
-          onClick={() => setCollapsed(c => !c)}
-        >
-          <MaterialIcon name={collapsed ? "expand_more" : "expand_less"} size="20px" />
-        </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-end">
           <button
             onClick={handleDownloadBiomarkers}
             disabled={biomarkers.length === 0}

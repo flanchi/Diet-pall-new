@@ -79,49 +79,7 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Feature Pills */}
-          <div className="flex flex-wrap gap-3">
-            <span className="badge-secondary"> Personalized Plans</span>
-            <span className="badge-accent"> GPS-Based Locations</span>
-            <span className="badge"> AI Advisor</span>
-          </div>
 
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="pt-2 sm:pt-4">
-            <div className="flex gap-2 neu-pill rounded-2xl sm:rounded-full p-1.5 card-hover">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for recipes, health tips..."
-                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-sm sm:text-base"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-gradient-to-r from-primary-600 to-primary-500 text-white px-4 sm:px-8 py-2.5 sm:py-3 rounded-xl sm:rounded-full font-semibold hover:shadow-glow-primary disabled:opacity-50 flex items-center gap-2 text-sm sm:text-base"
-              >
-                <MaterialIcon name="search" size="20px" />
-                {!loading && "Search"}
-              </button>
-            </div>
-          </form>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-3 sm:pt-4">
-            <div className="text-center p-3 sm:p-4 neu-surface">
-              <p className="text-xl sm:text-3xl font-bold gradient-text">500+</p>
-              <p className="text-xs sm:text-sm text-slate-600">Meal Plans</p>
-            </div>
-            <div className="text-center p-3 sm:p-4 neu-surface">
-              <p className="text-xl sm:text-3xl font-bold gradient-text">50+</p>
-              <p className="text-xs sm:text-sm text-slate-600">Restaurants</p>
-            </div>
-            <div className="text-center p-3 sm:p-4 neu-surface">
-              <p className="text-xl sm:text-3xl font-bold gradient-text">10+</p>
-              <p className="text-xs sm:text-sm text-slate-600">Health Tips</p>
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Slideshow */}
