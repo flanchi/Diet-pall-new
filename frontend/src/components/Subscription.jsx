@@ -9,13 +9,13 @@ const PLAN_OPTIONS = [
     priceMonthly: "$0",
     priceAnnual: "$0",
     details: "Essential nutrition tracking and core app features",
-    baseFeatures: [
+    includesText: null,
+    features: [
       "Basic tracking log",
       "BMI calculator",
       "5 sample recipes",
       "10 AI chat responses per day"
-    ],
-    additionalFeatures: []
+    ]
   },
   {
     key: "standard",
@@ -24,8 +24,8 @@ const PLAN_OPTIONS = [
     priceMonthly: "$12.99",
     priceAnnual: "$119.88",
     details: "Enhanced features with full recipe access and more AI responses",
-    baseFeatures: [],
-    additionalFeatures: [
+    includesText: "Includes all Basic features, plus:",
+    features: [
       "Full local recipe database",
       "Portion Scaler",
       "40 AI chat responses per day"
@@ -38,8 +38,8 @@ const PLAN_OPTIONS = [
     priceMonthly: "$14.99",
     priceAnnual: "$179.88",
     details: "Advanced health monitoring and priority support with clinical features",
-    baseFeatures: [],
-    additionalFeatures: [
+    includesText: "Includes all Standard features, plus:",
+    features: [
       "Safety Guardrails (Critical Alerts)",
       "PDF Download Reports",
       "Unlimited AI chat responses",
@@ -48,26 +48,6 @@ const PLAN_OPTIONS = [
     ]
   }
 ]
-
-// Get cumulative features for a tier
-const getCumulativeFeatures = (tierKey) => {
-  const allFeatures = []
-  
-  // Add all features from Basic tier
-  allFeatures.push(...PLAN_OPTIONS[0].baseFeatures)
-  
-  // Add additional features from Standard and below
-  if (tierKey === "standard" || tierKey === "premium") {
-    allFeatures.push(...PLAN_OPTIONS[1].additionalFeatures)
-  }
-  
-  // Add additional features from Premium
-  if (tierKey === "premium") {
-    allFeatures.push(...PLAN_OPTIONS[2].additionalFeatures)
-  }
-  
-  return allFeatures
-}
 
 export default function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState("free")
@@ -136,7 +116,10 @@ export default function Subscription() {
               {/* Features List */}
               <div className="mb-6 space-y-3 flex-1">
                 <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Included Features</p>
-                {getCumulativeFeatures(plan.key).map((feature, idx) => (
+                {plan.includesText && (
+                  <p className="text-xs text-slate-600 italic mb-2">{plan.includesText}</p>
+                )}
+                {plan.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
                       <MaterialIcon name="check_circle" size="18px" className="text-green-600" filled={true} />
