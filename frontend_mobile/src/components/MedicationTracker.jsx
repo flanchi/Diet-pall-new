@@ -226,8 +226,9 @@ export default function MedicationTracker({ user, medicalProfile }) {
       </div>
 
       {!collapsed && (
-      {/* Progress Bar */}
-      <div className="space-y-2">
+        <>
+          {/* Progress Bar */}
+          <div className="space-y-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold text-slate-700">Daily Progress</p>
           <p className="text-sm font-bold text-slate-800">{getCompletionPercentage()}%</p>

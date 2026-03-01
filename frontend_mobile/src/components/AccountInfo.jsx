@@ -207,7 +207,9 @@ export default function AccountInfo({ user, profile, onProfile }) {
               Emergency contact saved successfully!
             </div>
           )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Medical Profile Section */}
