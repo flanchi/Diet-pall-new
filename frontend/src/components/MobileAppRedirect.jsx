@@ -4,7 +4,7 @@ import MaterialIcon from "../utils/MaterialIcon"
 export default function MobileAppRedirect() {
   const [isInstalling, setIsInstalling] = useState(false)
 
-  const APK_DOWNLOAD_URL = "https://github.com/flanchi/Diet-pall-new/releases/download/latest/app-debug.apk"
+  const APK_DOWNLOAD_URL = "https://github.com/flanchi/Diet-pall-new/releases/download/v1.0.0-android/app-debug.apk"
 
   const handleDownload = () => {
     setIsInstalling(true)
