@@ -8,22 +8,24 @@ const PLAN_OPTIONS = [
     subtitle: "Free",
     priceMonthly: "$0",
     priceAnnual: "$0",
-    details: "Basic planning and core app features",
-    features: [
+    details: "Essential nutrition tracking and core app features",
+    baseFeatures: [
       "Basic tracking log",
       "BMI calculator",
       "5 sample recipes",
       "10 AI chat responses per day"
-    ]
+    ],
+    additionalFeatures: []
   },
   {
     key: "standard",
     title: "Standard",
-    subtitle: "Pro",
+    subtitle: "",
     priceMonthly: "$12.99",
     priceAnnual: "$119.88",
-    details: "Full feature access, meal plans, and basic AI suggestions",
-    features: [
+    details: "Enhanced features with full recipe access and more AI responses",
+    baseFeatures: [],
+    additionalFeatures: [
       "Full local recipe database",
       "Portion Scaler",
       "40 AI chat responses per day"
@@ -35,14 +37,37 @@ const PLAN_OPTIONS = [
     subtitle: "Clinical",
     priceMonthly: "$14.99",
     priceAnnual: "$179.88",
-    details: "Priority support, advanced AI meal planning, and premium content",
-    features: [
+    details: "Advanced health monitoring and priority support with clinical features",
+    baseFeatures: [],
+    additionalFeatures: [
       "Safety Guardrails (Critical Alerts)",
       "PDF Download Reports",
       "Unlimited AI chat responses",
       "POI restaurant filtering",
       "Free one-on-one consultation (1x per year)"
     ]
+  }
+]
+
+// Get cumulative features for a tier
+const getCumulativeFeatures = (tierKey) => {
+  const allFeatures = []
+  
+  // Add all features from Basic tier
+  allFeatures.push(...PLAN_OPTIONS[0].baseFeatures)
+  
+  // Add additional features from Standard and below
+  if (tierKey === "standard" || tierKey === "premium") {
+    allFeatures.push(...PLAN_OPTIONS[1].additionalFeatures)
+  }
+  
+  // Add additional features from Premium
+  if (tierKey === "premium") {
+    allFeatures.push(...PLAN_OPTIONS[2].additionalFeatures)
+  }
+  
+  return allFeatures
+}
   }
 ]
 
@@ -94,7 +119,7 @@ export default function Subscription() {
               
               <div className="mb-4">
                 <p className="text-2xl font-bold text-slate-900">{plan.title}</p>
-                <p className="text-xs text-slate-600 font-semibold">{plan.subtitle}</p>
+                {plan.subtitle && <p className="text-xs text-slate-600 font-semibold">{plan.subtitle}</p>}
               </div>
 
               {/* Pricing */}
@@ -113,7 +138,7 @@ export default function Subscription() {
               {/* Features List */}
               <div className="mb-6 space-y-3 flex-1">
                 <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Included Features</p>
-                {plan.features.map((feature, idx) => (
+                {getCumulativeFeatures(plan.key).map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
                       <MaterialIcon name="check_circle" size="18px" className="text-green-600" filled={true} />
@@ -196,10 +221,10 @@ export default function Subscription() {
             <span className="font-semibold">Basic (Free):</span> Perfect for casual users who want to explore the app with essential features like tracking logs, BMI calculations, and sample recipes.
           </p>
           <p>
-            <span className="font-semibold">Standard (Pro):</span> Ideal for users seeking more recipe variety, portion scaling, and increased AI chat support.
+            <span className="font-semibold">Standard:</span> Ideal for users seeking more recipe variety, portion scaling, and increased AI chat support. Includes all Basic features plus enhanced capabilities.
           </p>
           <p>
-            <span className="font-semibold">Premium (Clinical):</span> Designed for health-conscious individuals who need advanced safety alerts, comprehensive reports, and priority support including consultations.
+            <span className="font-semibold">Premium (Clinical):</span> Designed for health-conscious individuals who need advanced safety alerts, comprehensive reports, and priority support including consultations. Includes all Standard features plus clinical-grade tools.
           </p>
         </div>
       </div>
