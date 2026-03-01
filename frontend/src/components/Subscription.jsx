@@ -81,12 +81,12 @@ export default function Subscription() {
           return (
             <div
               key={plan.key}
-              className={`glass rounded-2.5xl border p-6 backdrop-blur-sm bg-white/40 transition ${
+              className={`glass rounded-2.5xl border p-6 backdrop-blur-sm bg-white/40 transition flex flex-col h-full ${
                 isSelected ? "border-primary-500 ring-2 ring-primary-200" : "border-white/20"
-              } ${isPremium ? "md:scale-105" : ""}`}
+              }`}
             >
               {isPremium && (
-                <div className="mb-3 inline-flex items-center gap-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                <div className="mb-3 inline-flex items-center gap-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold w-fit">
                   <MaterialIcon name="star" size="14px" filled={true} />
                   Most Popular
                 </div>
@@ -111,7 +111,7 @@ export default function Subscription() {
               <p className="text-sm text-slate-600 mb-5">{plan.details}</p>
 
               {/* Features List */}
-              <div className="mb-6 space-y-3">
+              <div className="mb-6 space-y-3 flex-1">
                 <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Included Features</p>
                 {plan.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
@@ -124,60 +124,62 @@ export default function Subscription() {
               </div>
 
               {/* Action buttons */}
-              {plan.key === 'free' ? (
-                <button
-                  onClick={() => choosePlan(plan.key)}
-                  className={`w-full py-3 px-4 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
-                    isSelected 
-                      ? "bg-gradient-to-r from-primary-600 to-secondary-600 text-white" 
-                      : "bg-slate-200 hover:bg-slate-300 text-slate-800"
-                  }`}
-                >
-                  {isSelected ? (
-                    <>
-                      <MaterialIcon name="check" size="18px" />
-                      Selected
-                    </>
-                  ) : (
-                    'Continue Free'
-                  )}
-                </button>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
+              <div className="mt-auto">
+                {plan.key === 'free' ? (
                   <button
-                    onClick={() => choosePlan(`${plan.key}_monthly`)}
-                    className={`py-3 px-3 rounded-lg font-semibold transition text-sm ${
-                      selectedPlan === `${plan.key}_monthly` 
+                    onClick={() => choosePlan(plan.key)}
+                    className={`w-full py-3 px-4 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
+                      isSelected 
                         ? "bg-gradient-to-r from-primary-600 to-secondary-600 text-white" 
                         : "bg-slate-200 hover:bg-slate-300 text-slate-800"
                     }`}
                   >
-                    {selectedPlan === `${plan.key}_monthly` ? (
+                    {isSelected ? (
                       <>
-                        <MaterialIcon name="check" size="16px" inline={true} /> Monthly
+                        <MaterialIcon name="check" size="18px" />
+                        Selected
                       </>
                     ) : (
-                      `Monthly`
+                      'Continue Free'
                     )}
                   </button>
-                  <button
-                    onClick={() => choosePlan(`${plan.key}_annual`)}
-                    className={`py-3 px-3 rounded-lg font-semibold transition text-sm ${
-                      selectedPlan === `${plan.key}_annual` 
-                        ? "bg-gradient-to-r from-primary-600 to-secondary-600 text-white" 
-                        : "bg-slate-200 hover:bg-slate-300 text-slate-800"
-                    }`}
-                  >
-                    {selectedPlan === `${plan.key}_annual` ? (
-                      <>
-                        <MaterialIcon name="check" size="16px" inline={true} /> Annual
-                      </>
-                    ) : (
-                      `Annual`
-                    )}
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => choosePlan(`${plan.key}_monthly`)}
+                      className={`py-3 px-3 rounded-lg font-semibold transition text-sm ${
+                        selectedPlan === `${plan.key}_monthly` 
+                          ? "bg-gradient-to-r from-primary-600 to-secondary-600 text-white" 
+                          : "bg-slate-200 hover:bg-slate-300 text-slate-800"
+                      }`}
+                    >
+                      {selectedPlan === `${plan.key}_monthly` ? (
+                        <>
+                          <MaterialIcon name="check" size="16px" inline={true} /> Monthly
+                        </>
+                      ) : (
+                        `Monthly`
+                      )}
+                    </button>
+                    <button
+                      onClick={() => choosePlan(`${plan.key}_annual`)}
+                      className={`py-3 px-3 rounded-lg font-semibold transition text-sm ${
+                        selectedPlan === `${plan.key}_annual` 
+                          ? "bg-gradient-to-r from-primary-600 to-secondary-600 text-white" 
+                          : "bg-slate-200 hover:bg-slate-300 text-slate-800"
+                      }`}
+                    >
+                      {selectedPlan === `${plan.key}_annual` ? (
+                        <>
+                          <MaterialIcon name="check" size="16px" inline={true} /> Annual
+                        </>
+                      ) : (
+                        `Annual`
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )
         })}
