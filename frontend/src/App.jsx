@@ -272,6 +272,15 @@ export default function App() {
     }
   }
 
+  // Check for mobile phone first - redirect before login page
+  if (isMobilePhone) {
+    return (
+      <ErrorBoundary>
+        <MobileAppRedirect />
+      </ErrorBoundary>
+    )
+  }
+
   // Show login page if not logged in
   if (!isLoggedIn) {
     if (tab === "forgot") {
@@ -314,15 +323,6 @@ const tabs = [
     ["grocery", "shopping_cart", "Grocery"],
     ["account", "account_circle", "Account"]
   ]
-
-  // Main app after login
-  if (isMobilePhone) {
-    return (
-      <ErrorBoundary>
-        <MobileAppRedirect />
-      </ErrorBoundary>
-    )
-  }
 
   return (
     <ErrorBoundary>
