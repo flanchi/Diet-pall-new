@@ -68,8 +68,6 @@ const getCumulativeFeatures = (tierKey) => {
   
   return allFeatures
 }
-  }
-]
 
 export default function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState("free")
