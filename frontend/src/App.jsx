@@ -2,6 +2,7 @@
 import axios from "axios"
 import { API_URL } from "./config"
 import MaterialIcon from "./utils/MaterialIcon"
+import { isPhoneUser } from "./utils/deviceDetection"
 import MapView from "./components/MapView"
 import AuthForm from "./components/AuthForm"
 import MealPlanDisplay from "./components/MealPlanDisplay"
@@ -19,9 +20,11 @@ import Subscription from "./components/Subscription"
 import Contact from "./components/Contact"
 import ForgotPasswordPage from "./components/ForgotPasswordPage"
 import ResetPasswordPage from "./components/ResetPasswordPage"
+import MobileAppRedirect from "./components/MobileAppRedirect"
 import ErrorBoundary from "./components/ErrorBoundary"
 
 export default function App() {
+  const [isMobilePhone, setIsMobilePhone] = useState(false)
   const [mealPlan, setMealPlan] = useState(null)
   const [user, setUser] = useState(null)
   const [medicalProfile, setMedicalProfile] = useState(null)
@@ -39,6 +42,13 @@ export default function App() {
     notifications: { mealReminders: false, medicationReminders: false, biomarkerReminders: false, reminderTime: "08:00" },
     maps: { usePreciseLocation: true, searchRadius: 5 }
   })
+
+  useEffect(() => {
+    // Detect if accessing from mobile phone
+    const phoneUser = isPhoneUser()
+    setIsMobilePhone(phoneUser)
+    console.log("Device detection:", { phoneUser })
+  }, [])
 
   useEffect(() => {
     // Clear any old login state on initial load
@@ -306,6 +316,14 @@ const tabs = [
   ]
 
   // Main app after login
+  if (isMobilePhone) {
+    return (
+      <ErrorBoundary>
+        <MobileAppRedirect />
+      </ErrorBoundary>
+    )
+  }
+
   return (
     <ErrorBoundary>
       <div className="app-root min-h-screen bg-transparent">
